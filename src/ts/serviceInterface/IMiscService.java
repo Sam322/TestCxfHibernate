@@ -32,6 +32,25 @@ public interface IMiscService {
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Path("/getNodesList/{RegionCode}/{Type}") 
 	public List<TransNode> getNodesList(@PathParam("RegionCode")String regionCode, @PathParam("Type")int type);
+    
+    /**
+     * ldq
+     * @return
+     */
+    @GET
+    @Produces({MediaType.APPLICATION_JSON })
+    @Path("/getAllNodesList") 
+	public List<TransNode> getAllNodesList();
+    
+    
+    /**
+     * ldq
+     * @return
+     */
+    @GET
+    @Produces({MediaType.APPLICATION_JSON })
+    @Path("/getNodesListByRegionCode/{RegionCode}") 
+	public List<TransNode> getNodesListByRegionCode(@PathParam("RegionCode")String regionCode);
 
     //===============================================================================================
     @GET

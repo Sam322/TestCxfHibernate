@@ -65,11 +65,16 @@ public class MiscService implements IMiscService{
 		return Response.ok(tn).header("EntityClass", "TransNode").build(); 
 	}
 	
-	/*@Override
-	public Response getAllNode() {
-		List<TransNode> transodeList = transNodeDao.getAll();
-		return Response.ok(transodeList).header("EntityClass", "TransNodeList").build(); 
-	}*/
+	@Override
+	public List<TransNode> getAllNodesList() {
+		return transNodeDao.getAll();
+	}
+	
+	@Override
+	public List<TransNode> getNodesListByRegionCode(String regionCode) {
+		// TODO Auto-generated method stub
+		return transNodeDao.findByRegionCode(regionCode);
+	}
 
 	@Override
 	public List<TransNode> getNodesList(String regionCode, int type) {
@@ -194,4 +199,6 @@ public class MiscService implements IMiscService{
 		// TODO Auto-generated method stub
 		
 	}
+
+
 }

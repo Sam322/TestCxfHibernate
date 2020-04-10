@@ -33,8 +33,8 @@ public class TransPackage implements Serializable {
 	
 	@Column(name="ID", nullable=false)	
 	@Id	
-	@GeneratedValue(generator="MODEL_TRANSPACKAGE_ID_GENERATOR")	
-	@org.hibernate.annotations.GenericGenerator(name="MODEL_TRANSPACKAGE_ID_GENERATOR", strategy="assigned")	
+	//@GeneratedValue(generator="MODEL_TRANSPACKAGE_ID_GENERATOR")	
+	//@org.hibernate.annotations.GenericGenerator(name="MODEL_TRANSPACKAGE_ID_GENERATOR", strategy="assigned")	
 	private String ID;
 	
 	@Column(name="SourceNode", nullable=true, length=8)	
