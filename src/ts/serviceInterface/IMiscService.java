@@ -51,6 +51,24 @@ public interface IMiscService {
     @Produces({MediaType.APPLICATION_JSON })
     @Path("/getNodesListByRegionCode/{RegionCode}") 
 	public List<TransNode> getNodesListByRegionCode(@PathParam("RegionCode")String regionCode);
+    
+    /**
+     * ldq
+     * @return
+     */
+    @POST
+    @Produces({MediaType.APPLICATION_JSON })
+    @Path("/saveTransNode") 
+	public Response saveTransNode(TransNode obj);
+    
+    /**
+     * ldq
+     * @return
+     */
+    @GET
+    @Produces({MediaType.APPLICATION_JSON })
+    @Path("/deleteTransNode/{id}") 
+	public Response deleteTransNode(@PathParam("id")String id);
 
     //===============================================================================================
     @GET

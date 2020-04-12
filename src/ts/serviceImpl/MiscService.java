@@ -10,7 +10,6 @@ import ts.daoImpl.RegionDao;
 import ts.daoImpl.TransNodeDao;
 import ts.model.CodeNamePair;
 import ts.model.CustomerInfo;
-import ts.model.ExpressSheet;
 import ts.model.Region;
 import ts.model.TransNode;
 import ts.serviceInterface.IMiscService;
@@ -58,18 +57,29 @@ public class MiscService implements IMiscService{
 		// TODO Auto-generated method stub
 		return null;
 	}*/
-	
+	/**
+	 * ldq
+	 * 通过id查询服务网点
+	 */
 	@Override
 	public Response getNode(String code) {
 		TransNode tn = transNodeDao.get(code);
 		return Response.ok(tn).header("EntityClass", "TransNode").build(); 
 	}
 	
+	/**
+	 * ldq
+	 * 获取所有服务网点
+	 */
 	@Override
 	public List<TransNode> getAllNodesList() {
 		return transNodeDao.getAll();
 	}
 	
+	/**
+	 * ldq
+	 * 通过地区代码获取服务网点
+	 */
 	@Override
 	public List<TransNode> getNodesListByRegionCode(String regionCode) {
 		// TODO Auto-generated method stub
@@ -82,6 +92,32 @@ public class MiscService implements IMiscService{
 		return null;
 	}
 
+	/**
+	 * ldq
+	 * 新建服务网点
+	 */
+	@Override
+	public Response saveTransNode(TransNode obj) {
+		try{
+			transNodeDao.save(obj);			
+			return Response.ok("Saved").header("EntityClass", "R_TransNode").build(); 
+		}
+		catch(Exception e)
+		{
+			return Response.serverError().entity(e.getMessage()).build(); 
+		}
+	}
+	
+	/**
+	 *ldq
+	 *删除服务网点 
+	 */
+	@Override
+	public Response deleteTransNode(String id) {
+		transNodeDao.removeById(id);
+		return Response.ok("Deleted").header("EntityClass", "D_TransNode").build();
+	}
+	
 	@Override
 	public List<CustomerInfo> getCustomerListByName(String name) {
 //		List<CustomerInfo> listci = customerInfoDao.findByName(name);
