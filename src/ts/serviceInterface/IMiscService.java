@@ -23,54 +23,46 @@ public interface IMiscService {
     @Path("/getNode/{NodeCode}") 
 	public Response getNode(@PathParam("NodeCode")String code);
     
-    /*@GET
-    @Produces({MediaType.APPLICATION_JSON })
-    @Path("/getAllNode") 
-    public Response getAllNode();*/
-
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Path("/getNodesList/{RegionCode}/{Type}") 
 	public List<TransNode> getNodesList(@PathParam("RegionCode")String regionCode, @PathParam("Type")int type);
     
-    /**
-     * ldq
-     * @return
-     */
+    // ldq @return获取所有服务站点
     @GET
     @Produces({MediaType.APPLICATION_JSON })
     @Path("/getAllNodesList") 
 	public List<TransNode> getAllNodesList();
     
-    
-    /**
-     * ldq
-     * @return
-     */
+    // ldq@return通过地区代码获取服务站点
     @GET
     @Produces({MediaType.APPLICATION_JSON })
     @Path("/getNodesListByRegionCode/{RegionCode}") 
 	public List<TransNode> getNodesListByRegionCode(@PathParam("RegionCode")String regionCode);
     
-    /**
-     * ldq
-     * @return
-     */
-    @POST
-    @Produces({MediaType.APPLICATION_JSON })
-    @Path("/saveTransNode") 
-	public Response saveTransNode(TransNode obj);
-    
-    /**
-     * ldq
-     * @return
-     */
+    //** ldq @return通过id删除服务站点
     @GET
     @Produces({MediaType.APPLICATION_JSON })
     @Path("/deleteTransNode/{id}") 
 	public Response deleteTransNode(@PathParam("id")String id);
+    
+    // ldq @return新建服务站点
+    @POST
+    //@Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON })
+    @Path("/saveTransNode")
+	public Response saveTransNode(TransNode obj);
+    
+
 
     //===============================================================================================
+    
+    //ldq获取所有顾客信息
+    @GET
+    @Produces({MediaType.APPLICATION_JSON })
+    @Path("/getAllCustomerInfo")
+    public List<CustomerInfo> getAllCustomer();
+    
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Path("/getCustomerListByName/{name}") 
@@ -95,6 +87,8 @@ public interface IMiscService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/saveCustomerInfo") 
 	public Response saveCustomerInfo(CustomerInfo obj);
+    
+
     
     //===============================================================================================
     @GET
@@ -136,6 +130,8 @@ public interface IMiscService {
 	public void doLogOut(@PathParam("uid") int uid);
 
 	public void RefreshSessionList();
+	
+
 
 	
 }

@@ -86,11 +86,6 @@ public class MiscService implements IMiscService{
 		return transNodeDao.findByRegionCode(regionCode);
 	}
 
-	@Override
-	public List<TransNode> getNodesList(String regionCode, int type) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/**
 	 * ldq
@@ -98,6 +93,8 @@ public class MiscService implements IMiscService{
 	 */
 	@Override
 	public Response saveTransNode(TransNode obj) {
+		// TODO Auto-generated method stub
+		System.out.println("调用了saveTransNode方法");
 		try{
 			transNodeDao.save(obj);			
 			return Response.ok("Saved").header("EntityClass", "R_TransNode").build(); 
@@ -118,6 +115,21 @@ public class MiscService implements IMiscService{
 		return Response.ok("Deleted").header("EntityClass", "D_TransNode").build();
 	}
 	
+	@Override
+	public List<TransNode> getNodesList(String regionCode, int type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    //===============================================================================================
+	
+	/**
+	 * ldq
+	 * 获取所有顾客信息
+	 */
+	@Override
+	public List<CustomerInfo> getAllCustomer(){
+		return customerInfoDao.getAll();
+	}
 	@Override
 	public List<CustomerInfo> getCustomerListByName(String name) {
 //		List<CustomerInfo> listci = customerInfoDao.findByName(name);
@@ -159,6 +171,7 @@ public class MiscService implements IMiscService{
 
 	@Override
 	public Response saveCustomerInfo(CustomerInfo obj) {
+		System.out.println("运行了saveCustomerInfo方法");
 		try{
 			customerInfoDao.save(obj);			
 			return Response.ok(obj).header("EntityClass", "R_CustomerInfo").build(); 
@@ -235,6 +248,9 @@ public class MiscService implements IMiscService{
 		// TODO Auto-generated method stub
 		
 	}
+
+
+
 
 
 }

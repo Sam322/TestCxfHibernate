@@ -32,8 +32,8 @@ public class CustomerInfo implements Serializable {
 	
 	@Column(name="ID", nullable=false)	
 	@Id	
-	@GeneratedValue(generator="MODEL_CUSTOMERINFO_ID_GENERATOR")	
-	@org.hibernate.annotations.GenericGenerator(name="MODEL_CUSTOMERINFO_ID_GENERATOR", strategy="native")	
+	//@GeneratedValue(generator="MODEL_CUSTOMERINFO_ID_GENERATOR")	
+	//@org.hibernate.annotations.GenericGenerator(name="MODEL_CUSTOMERINFO_ID_GENERATOR", strategy="native")	
 	private int ID;
 	
 	@Column(name="Name", nullable=true, length=16)	
