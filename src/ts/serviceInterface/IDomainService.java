@@ -11,14 +11,32 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-
 import ts.model.ExpressSheet;
 import ts.model.TransPackage;
 
 @Path("/Domain")	//业务操作
 public interface IDomainService {
     //快件操作访问接口=======================================================================
+	
+	//ldq获取所有运单信息
+	@GET
+    @Produces({MediaType.APPLICATION_JSON })
+    @Path("/getAllExpressList") 
+	public List<ExpressSheet> getAllExpressList();
+	
+	//ldq删除所选运单信息
+	@GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/deleteExpressSheet/{id}") 
+	public Response deleteExpressSheet(@PathParam("id")String id);
+	
+	//ldq通过收货人姓名查询订单
+	@GET
+    @Produces({MediaType.APPLICATION_JSON })
+    @Path("/getExpressSheetbyrecevername/{recevername}") 
+	public List<ExpressSheet> getExpressSheetbyrecevername(@PathParam("recevername")String recevername);
+
+	
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Path("/getExpressList/{Property}/{Restrictions}/{Value}") 
@@ -32,7 +50,6 @@ public interface IDomainService {
     @GET
     @Produces(MediaType.APPLICATION_JSON )
     @Path("/getExpressSheet/{id}") 
-    
 	public Response getExpressSheet(@PathParam("id")String id);
 
     @GET

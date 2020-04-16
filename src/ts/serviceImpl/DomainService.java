@@ -19,14 +19,14 @@ import ts.model.TransPackageContent;
 import ts.serviceInterface.IDomainService;
 
 public class DomainService implements IDomainService {
-	
+
 	private ExpressSheetDao expressSheetDao;
 	private TransPackageDao transPackageDao;
 	private TransHistoryDao transHistoryDao;
 	private TransPackageContentDao transPackageContentDao;
-	
+
 	private UserInfoDao userInfoDao;
-	
+
 	public ExpressSheetDao getExpressSheetDao() {
 		return expressSheetDao;
 	}
@@ -68,27 +68,51 @@ public class DomainService implements IDomainService {
 	}
 
 	public Date getCurrentDate() {
-		//产生一个不带毫秒的时间,不然,SQL时间和JAVA时间格式不一致
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		// 产生一个不带毫秒的时间,不然,SQL时间和JAVA时间格式不一致
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 		Date tm = new Date();
 		try {
-			tm= sdf.parse(sdf.format(new Date()));
+			tm = sdf.parse(sdf.format(new Date()));
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
 		return tm;
 	}
 
+	/**
+	 * ldq 获取所有运单信息
+	 */
 	@Override
-	public List<ExpressSheet> getExpressList(String property,
-			String restrictions, String value) {
+	public List<ExpressSheet> getAllExpressList() {
+		return expressSheetDao.getAll();
+	}
+
+	/**
+	 * ldq 删除所选运单（id）
+	 */
+	@Override
+	public Response deleteExpressSheet(String id) {
+		expressSheetDao.removeById(id);
+		return Response.ok("Deleted").header("EntityClass", "D_ExpressSheet").build();
+	}
+
+	/**
+	 * ldq 根据收货人姓名查询运单
+	 */
+	@Override
+	public List<ExpressSheet> getExpressSheetbyrecevername(String recevername) {
+		return null;
+	}
+
+	@Override
+	public List<ExpressSheet> getExpressList(String property, String restrictions, String value) {
 		List<ExpressSheet> list = new ArrayList<ExpressSheet>();
-		switch(restrictions.toLowerCase()){
+		switch (restrictions.toLowerCase()) {
 		case "eq":
 			list = expressSheetDao.findBy(property, value, "ID", true);
 			break;
 		case "like":
-			list = expressSheetDao.findLike(property, value+"%", "ID", true);
+			list = expressSheetDao.findLike(property, value + "%", "ID", true);
 			break;
 		}
 		return list;
@@ -116,32 +140,33 @@ public class DomainService implements IDomainService {
 //	}
 
 	@Override
-	public List<ExpressSheet> getExpressListInPackage(String packageId){
+	public List<ExpressSheet> getExpressListInPackage(String packageId) {
 		List<ExpressSheet> list = new ArrayList<ExpressSheet>();
 		list = expressSheetDao.getListInPackage(packageId);
-		return list;		
+		return list;
 	}
 
 	@Override
 	public Response getExpressSheet(String id) {
 		ExpressSheet es = expressSheetDao.get(id);
-		return Response.ok(es).header("EntityClass", "ExpressSheet").build(); 
+		return Response.ok(es).header("EntityClass", "ExpressSheet").build();
 	}
 
 	@Override
 	public Response newExpressSheet(String id, int uid) {
 		ExpressSheet es = null;
-		try{
+		try {
 			es = expressSheetDao.get(id);
-		} catch (Exception e1) {}
+		} catch (Exception e1) {
+		}
 
-		if(es != null){
+		if (es != null) {
 //			if(es.getStatus() != 0)
 //				return Response.ok(es).header("EntityClass", "L_ExpressSheet").build(); //已经存在,且不能更改
 //			else
-				return Response.ok("快件运单信息已经存在!\n无法创建!").header("EntityClass", "E_ExpressSheet").build(); //已经存在
+			return Response.ok("快件运单信息已经存在!\n无法创建!").header("EntityClass", "E_ExpressSheet").build(); // 已经存在
 		}
-		try{
+		try {
 			String pkgId = userInfoDao.get(uid).getReceivePackageID();
 			ExpressSheet nes = new ExpressSheet();
 			nes.setID(id);
@@ -154,48 +179,44 @@ public class DomainService implements IDomainService {
 //			pkg_add.setExpress(nes);
 //			nes.getTransPackageContent().add(pkg_add);
 			expressSheetDao.save(nes);
-			//放到收件包裹中
-			MoveExpressIntoPackage(nes.getID(),pkgId);
-			return Response.ok(nes).header("EntityClass", "ExpressSheet").build(); 
-		}
-		catch(Exception e)
-		{
-			return Response.serverError().entity(e.getMessage()).build(); 
+			// 放到收件包裹中
+			MoveExpressIntoPackage(nes.getID(), pkgId);
+			return Response.ok(nes).header("EntityClass", "ExpressSheet").build();
+		} catch (Exception e) {
+			return Response.serverError().entity(e.getMessage()).build();
 		}
 	}
 
 	@Override
 	public Response saveExpressSheet(ExpressSheet obj) {
-		try{
-			//ExpressSheet nes = expressSheetDao.get(obj.getID());
-			if(obj.getStatus() != ExpressSheet.STATUS.STATUS_CREATED){
-				return Response.ok("快件运单已付运!无法保存更改!").header("EntityClass", "E_ExpressSheet").build(); 
+		System.out.println("调用了保存运单方法！");
+		try {
+			// ExpressSheet nes = expressSheetDao.get(obj.getID());
+			if (obj.getStatus() != ExpressSheet.STATUS.STATUS_CREATED) {
+				return Response.ok("快件运单已付运!无法保存更改!").header("EntityClass", "E_ExpressSheet").build();
 			}
-			expressSheetDao.save(obj);			
-			return Response.ok(obj).header("EntityClass", "R_ExpressSheet").build(); 
-		}
-		catch(Exception e)
-		{
-			return Response.serverError().entity(e.getMessage()).build(); 
+			expressSheetDao.save(obj);
+			return Response.ok(obj).header("EntityClass", "R_ExpressSheet").build();
+		} catch (Exception e) {
+			System.out.println(e);
+			return Response.serverError().entity(e.getMessage()).build();
 		}
 	}
 
 	@Override
 	public Response ReceiveExpressSheetId(String id, int uid) {
-		try{
+		try {
 			ExpressSheet nes = expressSheetDao.get(id);
-			if(nes.getStatus() != ExpressSheet.STATUS.STATUS_CREATED){
-				return Response.ok("快件运单状态错误!无法收件!").header("EntityClass", "E_ExpressSheet").build(); 
+			if (nes.getStatus() != ExpressSheet.STATUS.STATUS_CREATED) {
+				return Response.ok("快件运单状态错误!无法收件!").header("EntityClass", "E_ExpressSheet").build();
 			}
 			nes.setAccepter(String.valueOf(uid));
 			nes.setAccepteTime(getCurrentDate());
 			nes.setStatus(ExpressSheet.STATUS.STATUS_TRANSPORT);
 			expressSheetDao.save(nes);
-			return Response.ok(nes).header("EntityClass", "ExpressSheet").build(); 
-		}
-		catch(Exception e)
-		{
-			return Response.serverError().entity(e.getMessage()).build(); 
+			return Response.ok(nes).header("EntityClass", "ExpressSheet").build();
+		} catch (Exception e) {
+			return Response.serverError().entity(e.getMessage()).build();
 		}
 	}
 
@@ -207,7 +228,7 @@ public class DomainService implements IDomainService {
 
 	public boolean MoveExpressIntoPackage(String id, String targetPkgId) {
 		TransPackage targetPkg = transPackageDao.get(targetPkgId);
-		if((targetPkg.getStatus() > 0) && (targetPkg.getStatus() < 3)){	//包裹的状态快点定义,打开的包裹或者货篮才能操作==================================================================
+		if ((targetPkg.getStatus() > 0) && (targetPkg.getStatus() < 3)) { // 包裹的状态快点定义,打开的包裹或者货篮才能操作==================================================================
 			return false;
 		}
 
@@ -215,69 +236,66 @@ public class DomainService implements IDomainService {
 		pkg_add.setPkg(targetPkg);
 		pkg_add.setExpress(expressSheetDao.get(id));
 		pkg_add.setStatus(TransPackageContent.STATUS.STATUS_ACTIVE);
-		transPackageContentDao.save(pkg_add); 
+		transPackageContentDao.save(pkg_add);
 		return true;
 	}
 
 	public boolean MoveExpressFromPackage(String id, String sourcePkgId) {
 		TransPackage sourcePkg = transPackageDao.get(sourcePkgId);
-		if((sourcePkg.getStatus() > 0) && (sourcePkg.getStatus() < 3)){
+		if ((sourcePkg.getStatus() > 0) && (sourcePkg.getStatus() < 3)) {
 			return false;
 		}
 
 		TransPackageContent pkg_add = transPackageContentDao.get(id, sourcePkgId);
 		pkg_add.setStatus(TransPackageContent.STATUS.STATUS_OUTOF_PACKAGE);
-		transPackageContentDao.save(pkg_add); 
+		transPackageContentDao.save(pkg_add);
 		return true;
 	}
 
 	public boolean MoveExpressBetweenPackage(String id, String sourcePkgId, String targetPkgId) {
-		//需要加入事务机制
-		MoveExpressFromPackage(id,sourcePkgId);
-		MoveExpressIntoPackage(id,targetPkgId);
+		// 需要加入事务机制
+		MoveExpressFromPackage(id, sourcePkgId);
+		MoveExpressIntoPackage(id, targetPkgId);
 		return true;
 	}
 
 	@Override
 	public Response DeliveryExpressSheetId(String id, int uid) {
-		try{
+		try {
 			String pkgId = userInfoDao.get(uid).getDelivePackageID();
 			ExpressSheet nes = expressSheetDao.get(id);
-			if(nes.getStatus() != ExpressSheet.STATUS.STATUS_TRANSPORT){
-				return Response.ok("快件运单状态错误!无法交付").header("EntityClass", "E_ExpressSheet").build(); 
+			if (nes.getStatus() != ExpressSheet.STATUS.STATUS_TRANSPORT) {
+				return Response.ok("快件运单状态错误!无法交付").header("EntityClass", "E_ExpressSheet").build();
 			}
-			
-			if(transPackageContentDao.getSn(id, pkgId) == 0){
-				//临时的一个处理方式,断路了包裹的传递过程,自己的货篮倒腾一下
-				MoveExpressBetweenPackage(id, userInfoDao.get(uid).getReceivePackageID(),pkgId);
-				return Response.ok("快件运单状态错误!\n快件信息没在您的派件包裹中!").header("EntityClass", "E_ExpressSheet").build(); 
+
+			if (transPackageContentDao.getSn(id, pkgId) == 0) {
+				// 临时的一个处理方式,断路了包裹的传递过程,自己的货篮倒腾一下
+				MoveExpressBetweenPackage(id, userInfoDao.get(uid).getReceivePackageID(), pkgId);
+				return Response.ok("快件运单状态错误!\n快件信息没在您的派件包裹中!").header("EntityClass", "E_ExpressSheet").build();
 			}
-				
+
 			nes.setDeliver(String.valueOf(uid));
 			nes.setDeliveTime(getCurrentDate());
 			nes.setStatus(ExpressSheet.STATUS.STATUS_DELIVERIED);
 			expressSheetDao.save(nes);
-			//从派件包裹中删除
-			MoveExpressFromPackage(nes.getID(),pkgId);
-			//快件没有历史记录,很难给出收件和交付的记录
-			return Response.ok(nes).header("EntityClass", "ExpressSheet").build(); 
-		}
-		catch(Exception e)
-		{
-			return Response.serverError().entity(e.getMessage()).build(); 
+			// 从派件包裹中删除
+			MoveExpressFromPackage(nes.getID(), pkgId);
+			// 快件没有历史记录,很难给出收件和交付的记录
+			return Response.ok(nes).header("EntityClass", "ExpressSheet").build();
+		} catch (Exception e) {
+			return Response.serverError().entity(e.getMessage()).build();
 		}
 	}
 
 	@Override
-	public List<TransPackage> getTransPackageList(String property,
-			String restrictions, String value) {
+	public List<TransPackage> getTransPackageList(String property, String restrictions, String value) {
 		List<TransPackage> list = new ArrayList<TransPackage>();
-		switch(restrictions.toLowerCase()){
+		switch (restrictions.toLowerCase()) {
 		case "eq":
 			list = transPackageDao.findBy(property, value, "ID", true);
 			break;
 		case "like":
-			list = transPackageDao.findLike(property, value+"%", "ID", true);
+			list = transPackageDao.findLike(property, value + "%", "ID", true);
 			break;
 		}
 		return list;
@@ -286,34 +304,30 @@ public class DomainService implements IDomainService {
 	@Override
 	public Response getTransPackage(String id) {
 		TransPackage es = transPackageDao.get(id);
-		return Response.ok(es).header("EntityClass", "TransPackage").build(); 
+		return Response.ok(es).header("EntityClass", "TransPackage").build();
 	}
 
 	@Override
 	public Response newTransPackage(String id, int uid) {
-		try{
+		try {
 			TransPackage npk = new TransPackage();
 			npk.setID(id);
-			//npk.setStatus(value);
+			// npk.setStatus(value);
 			npk.setCreateTime(new Date());
 			transPackageDao.save(npk);
-			return Response.ok(npk).header("EntityClass", "TransPackage").build(); 
-		}
-		catch(Exception e)
-		{
-			return Response.serverError().entity(e.getMessage()).build(); 
+			return Response.ok(npk).header("EntityClass", "TransPackage").build();
+		} catch (Exception e) {
+			return Response.serverError().entity(e.getMessage()).build();
 		}
 	}
 
 	@Override
 	public Response saveTransPackage(TransPackage obj) {
-		try{
-			transPackageDao.save(obj);			
-			return Response.ok(obj).header("EntityClass", "R_TransPackage").build(); 
-		}
-		catch(Exception e)
-		{
-			return Response.serverError().entity(e.getMessage()).build(); 
+		try {
+			transPackageDao.save(obj);
+			return Response.ok(obj).header("EntityClass", "R_TransPackage").build();
+		} catch (Exception e) {
+			return Response.serverError().entity(e.getMessage()).build();
 		}
 	}
 }
