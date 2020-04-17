@@ -15,6 +15,7 @@ import ts.model.CodeNamePair;
 import ts.model.CustomerInfo;
 import ts.model.Region;
 import ts.model.TransNode;
+import ts.model.UserInfo;
 
 @Path("/Misc")
 public interface IMiscService {
@@ -88,7 +89,18 @@ public interface IMiscService {
     @Path("/saveCustomerInfo") 
 	public Response saveCustomerInfo(CustomerInfo obj);
     
-
+    //==============================================================================================
+    
+    //tzx
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/saveUserInfo")
+    public Response saveUserInfo(UserInfo obj);
+    //tzx
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/getAllUserInfo")
+    public List<UserInfo> getAllUserInfo();
     
     //===============================================================================================
     @GET
@@ -128,10 +140,12 @@ public interface IMiscService {
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Path("/doLogOut/{uid}") 
 	public void doLogOut(@PathParam("uid") int uid);
-
+    
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/doRegister/{telcode}/{pwd}/{dptid}")
+    public boolean doRegister(@PathParam("telcode") String telcode,@PathParam("pwd") String pwd,@PathParam("dptid") String dptid);
 	public void RefreshSessionList();
-	
-
 
 	
 }

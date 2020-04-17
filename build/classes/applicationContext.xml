@@ -82,6 +82,7 @@
 				<property name="transNodeDao" ref="transNodeDao"></property>	<!-- 配置MiscService中的属性dao -->
 				<property name="regionDao" ref="regionDao"></property>
 				<property name="customerInfoDao" ref="customerInfoDao"></property>
+				<property name="userInfoDao" ref="userInfoDao"></property>
 			</bean>
 			<bean class="ts.serviceImpl.DomainService">
 				<property name="expressSheetDao" ref="expressSheetDao"></property>	<!-- 配置DomainService中的属性dao -->

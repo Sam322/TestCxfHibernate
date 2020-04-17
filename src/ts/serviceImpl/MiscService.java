@@ -8,10 +8,12 @@ import javax.ws.rs.core.Response;
 import ts.daoImpl.CustomerInfoDao;
 import ts.daoImpl.RegionDao;
 import ts.daoImpl.TransNodeDao;
+import ts.daoImpl.UserInfoDao;
 import ts.model.CodeNamePair;
 import ts.model.CustomerInfo;
 import ts.model.Region;
 import ts.model.TransNode;
+import ts.model.UserInfo;
 import ts.serviceInterface.IMiscService;
 
 public class MiscService implements IMiscService{
@@ -20,7 +22,8 @@ public class MiscService implements IMiscService{
 	private TransNodeDao transNodeDao;
 	private RegionDao regionDao;
 	private CustomerInfoDao customerInfoDao;
-
+	private UserInfoDao userInfoDao;
+	
 	public TransNodeDao getTransNodeDao() {
 		return transNodeDao;
 	}
@@ -43,6 +46,13 @@ public class MiscService implements IMiscService{
 
 	public void setCustomerInfoDao(CustomerInfoDao dao) {
 		this.customerInfoDao = dao;
+	}
+	public UserInfoDao getUserInfoDao() {
+		return userInfoDao;
+	}
+
+	public void setUserInfoDao(UserInfoDao dao) {
+		this.userInfoDao = dao;
 	}
 
 	public MiscService(){
@@ -181,7 +191,9 @@ public class MiscService implements IMiscService{
 			return Response.serverError().entity(e.getMessage()).build(); 
 		}
 	}
-
+	
+	
+	
 	@Override
 	public List<CodeNamePair> getProvinceList() {		
 		List<Region> listrg = regionDao.getProvinceList();
@@ -247,6 +259,43 @@ public class MiscService implements IMiscService{
 	public void RefreshSessionList() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	//tzx
+	@Override
+	public Response saveUserInfo(UserInfo obj) {
+		System.out.println("调用了saveUserInfo方法");
+		
+		try{
+			userInfoDao.save(obj);			
+			return Response.ok(obj).header("EntityClass", "R_UserInfo").build(); 
+		}
+		catch(Exception e)
+		{
+			return Response.serverError().entity(e.getMessage()).build(); 
+		}
+		
+	}
+	
+	//tzx
+	@Override
+	public List<UserInfo> getAllUserInfo() {
+		return userInfoDao.getAll();
+	}
+
+	@Override
+	public boolean doRegister(String telCode, String pwd,String dptid) {
+		UserInfo userInfo = new UserInfo();
+		userInfo.setTelCode(telCode);
+		userInfo.setPWD(pwd);
+		userInfo.setDptID(dptid);
+		userInfo.setStatus(0);
+		List<UserInfo> userList = userInfoDao.findByTelCode(telCode);
+		if (userList.size()!=0) {
+			return false;
+		}
+		userInfoDao.save(userInfo);
+		return true;
 	}
 
 
