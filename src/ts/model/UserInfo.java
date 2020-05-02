@@ -15,8 +15,14 @@ package ts.model;
 
 import java.io.Serializable;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @org.hibernate.annotations.Proxy(lazy=false)
 @Table(name="UserInfo")
@@ -131,7 +137,7 @@ public class UserInfo implements Serializable {
 	public void setReceivePackageID(String value) {
 		this.receivePackageID = value;
 	}
-	
+
 	public String getReceivePackageID() {
 		return receivePackageID;
 	}
@@ -139,7 +145,7 @@ public class UserInfo implements Serializable {
 	public void setDelivePackageID(String value) {
 		this.delivePackageID = value;
 	}
-	
+
 	public String getDelivePackageID() {
 		return delivePackageID;
 	}
@@ -147,7 +153,7 @@ public class UserInfo implements Serializable {
 	public void setTransPackageID(String value) {
 		this.transPackageID = value;
 	}
-	
+
 	public String getTransPackageID() {
 		return transPackageID;
 	}
@@ -156,6 +162,7 @@ public class UserInfo implements Serializable {
 		this.usersPackage = value;
 	}
 	
+	@XmlTransient
 	public java.util.Set<UsersPackage> getUsersPackage() {
 		return usersPackage;
 	}

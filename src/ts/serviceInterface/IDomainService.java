@@ -38,7 +38,8 @@ public interface IDomainService {
 
 	
     @GET
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON })
     @Path("/getExpressList/{Property}/{Restrictions}/{Value}") 
 	public List<ExpressSheet> getExpressList(@PathParam("Property")String property, @PathParam("Restrictions")String restrictions, @PathParam("Value")String value);
 
@@ -64,6 +65,14 @@ public interface IDomainService {
     @Path("/saveExpressSheet") 
 	public Response saveExpressSheet(ExpressSheet obj);
     
+    //ldq编辑运单
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/editExpressSheet") 
+	public Response editExpressSheet(ExpressSheet obj);
+    
+    
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -83,13 +92,20 @@ public interface IDomainService {
 	public Response DeliveryExpressSheetId(@PathParam("id")String id, @PathParam("uid")int uid);
 
     //包裹操作访问接口=======================================================================
+    
+    //ldq获取所有包裹信息
     @GET
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({MediaType.APPLICATION_JSON })
+    @Path("/getAllTransPackage") 
+	public List<TransPackage> getAllTransPackage();
+    
+    @GET
+    @Produces({MediaType.APPLICATION_JSON })
     @Path("/getTransPackageList/{Property}/{Restrictions}/{Value}") 
 	public List<TransPackage> getTransPackageList(@PathParam("Property")String property, @PathParam("Restrictions")String restrictions, @PathParam("Value")String value);
 
     @GET
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({MediaType.APPLICATION_JSON })
     @Path("/getTransPackage/{id}") 
 	public Response getTransPackage(@PathParam("id")String id);
 
@@ -100,7 +116,23 @@ public interface IDomainService {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Path("/saveTransPackage") 
 	public Response saveTransPackage(TransPackage obj);
+    
+    //ldq 编辑包裹信息
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/editTransPackage") 
+	public Response editTransPackage(TransPackage obj);
+    
+    
+  //快件历史访问接口=======================================================================
+    //ldq 通过快件id查询此快件所在的包裹
+    @GET
+    @Produces({MediaType.APPLICATION_JSON })
+    @Path("/findTransPackagebyExpressSheetId/{id}") 
+	public TransPackage findTransPackagebyExpressSheetId(@PathParam("id")String id);
     
 }

@@ -102,29 +102,35 @@ public interface IMiscService {
     @Path("/getAllUserInfo")
     public List<UserInfo> getAllUserInfo();
     
+    //ldq 用uid查询用户
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/getUserInfo/{uid}")
+    public UserInfo getUserInfo(@PathParam("uid")int uid);
+    
     //===============================================================================================
     @GET
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({MediaType.APPLICATION_JSON })
     @Path("/getProvinceList") 
 	public List<CodeNamePair> getProvinceList();
     
     @GET
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({MediaType.APPLICATION_JSON })
     @Path("/getCityList/{prv}") 
 	public List<CodeNamePair> getCityList(@PathParam("prv")String prv);
     
     @GET
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({MediaType.APPLICATION_JSON })
     @Path("/getTownList/{city}") 
 	public List<CodeNamePair> getTownList(@PathParam("city")String city);
     
     @GET
-    @Produces({ MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON })
+    @Produces({MediaType.APPLICATION_JSON })
     @Path("/getRegionString/{id}") 
 	public String getRegionString(@PathParam("id")String id);
     
     @GET
-    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({MediaType.APPLICATION_JSON })
     @Path("/getRegion/{id}") 
 	public Region getRegion(@PathParam("id")String id);
     
@@ -133,8 +139,8 @@ public interface IMiscService {
     
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    @Path("/doLogin/{uid}/{pwd}") 
-	public boolean doLogin(@PathParam("uid") int uid, @PathParam("pwd") String pwd);
+    @Path("/doLogin/{telcode}/{pwd}") 
+	public UserInfo doLogin(@PathParam("telcode") String telcode, @PathParam("pwd") String pwd);
     
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

@@ -16,10 +16,20 @@ package ts.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlTransient;
+
 @Entity
-@org.hibernate.annotations.Proxy(lazy=false)
-@Table(name="TransHistory")
+@org.hibernate.annotations.Proxy(lazy = false)
+@Table(name = "TransHistory")
 public class TransHistory implements Serializable {
 	/**
 	 * 
@@ -28,102 +38,102 @@ public class TransHistory implements Serializable {
 
 	public TransHistory() {
 	}
-	
-	@Column(name="SN", nullable=false)	
-	@Id	
-	@GeneratedValue(generator="MODEL_TRANSHISTORY_SN_GENERATOR")	
-	@org.hibernate.annotations.GenericGenerator(name="MODEL_TRANSHISTORY_SN_GENERATOR", strategy="native")	
+
+	@Column(name = "SN", nullable = false)
+	@Id
+	@GeneratedValue(generator = "MODEL_TRANSHISTORY_SN_GENERATOR")
+	@org.hibernate.annotations.GenericGenerator(name = "MODEL_TRANSHISTORY_SN_GENERATOR", strategy = "native")
 	private int SN;
-	
-	@ManyToOne(targetEntity=TransPackage.class, fetch=FetchType.LAZY)	
-	@org.hibernate.annotations.Cascade({org.hibernate.annotations.CascadeType.LOCK})	
-	@JoinColumns({ @JoinColumn(name="PackageID", referencedColumnName="ID", nullable=false) })	
+
+	@ManyToOne(targetEntity = TransPackage.class, fetch = FetchType.LAZY)
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.LOCK })
+	@JoinColumns({ @JoinColumn(name = "PackageID", referencedColumnName = "ID", nullable = false) })
 	private TransPackage pkg;
-	
-	@Column(name="ActTime", nullable=false)	
+
+	@Column(name = "ActTime", nullable = false)
 	private Date actTime;
-	
-	@Column(name="UIDFrom", nullable=false, length=10)	
+
+	@Column(name = "UIDFrom", nullable = false, length = 10)
 	private int UIDFrom;
-	
-	@Column(name="UIDTo", nullable=false, length=10)	
+
+	@Column(name = "UIDTo", nullable = false, length = 10)
 	private int UIDTo;
-	
-	@Column(name="x", nullable=true)	
+
+	@Column(name = "x", nullable = true)
 	private Float x;
-	
-	@Column(name="y", nullable=true)	
+
+	@Column(name = "y", nullable = true)
 	private Float y;
-	
+
 	public void setSN(int value) {
 		this.SN = value;
 	}
-	
+
 	public int getSN() {
 		return SN;
 	}
-	
+
 	public int getORMID() {
 		return getSN();
 	}
-	
+
 	public void setActTime(Date value) {
 		this.actTime = value;
 	}
-	
+
 	public Date getActTime() {
 		return actTime;
 	}
-	
+
 	public void setUIDFrom(int value) {
 		this.UIDFrom = value;
 	}
-	
+
 	public int getUIDFrom() {
 		return UIDFrom;
 	}
-	
+
 	public void setUIDTo(int value) {
 		this.UIDTo = value;
 	}
-	
+
 	public int getUIDTo() {
 		return UIDTo;
 	}
-	
+
 	public void setX(Float value) {
 		this.x = value;
 	}
-	
+
 	public Float getX() {
 		return x;
 	}
-	
+
 	public void setY(Float value) {
 		this.y = value;
 	}
-	
+
 	public Float getY() {
 		return y;
 	}
-	
+
 	public void setPkg(TransPackage value) {
 		this.pkg = value;
 	}
-	
+
+	@XmlTransient
 	public TransPackage getPkg() {
 		return pkg;
 	}
-	
+
 	public String toString() {
 		return toString(false);
 	}
-	
+
 	public String toString(boolean idOnly) {
 		if (idOnly) {
 			return String.valueOf(getSN());
-		}
-		else {
+		} else {
 			StringBuffer sb = new StringBuffer();
 			sb.append("TransHistory[ ");
 			sb.append("SN=").append(getSN()).append(" ");

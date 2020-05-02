@@ -15,8 +15,17 @@ package ts.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @org.hibernate.annotations.Proxy(lazy=false)
@@ -91,7 +100,7 @@ public class PackageRoute implements Serializable {
 	public void setPkg(TransPackage value) {
 		this.pkg = value;
 	}
-	
+	@XmlTransient
 	public TransPackage getPkg() {
 		return pkg;
 	}

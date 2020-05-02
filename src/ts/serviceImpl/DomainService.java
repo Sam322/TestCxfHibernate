@@ -186,10 +186,44 @@ public class DomainService implements IDomainService {
 			return Response.serverError().entity(e.getMessage()).build();
 		}
 	}
-
+	/**
+	 * ldq
+	 * 编辑运单
+	 */
+	@Override
+	public Response editExpressSheet(ExpressSheet obj) {
+		System.out.println("调用了保存运单方法！");
+		System.out.println(obj);
+		try {
+			// ExpressSheet nes = expressSheetDao.get(obj.getID());
+			/*if (obj.getStatus() != ExpressSheet.STATUS.STATUS_CREATED) {
+				return Response.ok("快件运单已付运!无法保存更改!").header("EntityClass", "E_ExpressSheet").build();
+			}*/
+			expressSheetDao.save(obj);
+			return Response.ok(obj).header("EntityClass", "R_ExpressSheet").build();
+		} catch (Exception e) {
+			System.out.println(e);
+			return Response.serverError().entity(e.getMessage()).build();
+		}
+	}
+	/**
+	 * ldq
+	 * 保存运单
+	 */
 	@Override
 	public Response saveExpressSheet(ExpressSheet obj) {
 		System.out.println("调用了保存运单方法！");
+		System.out.println(obj);
+		
+		ExpressSheet es = null;
+		try {
+			es = expressSheetDao.get(obj.getID());
+		} catch (Exception e1) {
+		}
+		if (es != null) {
+			return Response.ok("Error").header("EntityClass", "E_ExpressSheet").build(); // 已经存在
+		}
+		
 		try {
 			// ExpressSheet nes = expressSheetDao.get(obj.getID());
 			if (obj.getStatus() != ExpressSheet.STATUS.STATUS_CREATED) {
@@ -199,7 +233,7 @@ public class DomainService implements IDomainService {
 			return Response.ok(obj).header("EntityClass", "R_ExpressSheet").build();
 		} catch (Exception e) {
 			System.out.println(e);
-			return Response.serverError().entity(e.getMessage()).build();
+			return Response.ok("Error").entity(e.getMessage()).build();
 		}
 	}
 
@@ -300,6 +334,15 @@ public class DomainService implements IDomainService {
 		}
 		return list;
 	}
+	
+	/**
+	 * ldq
+	 * 获取所有包裹信息
+	 */
+	@Override
+	public  List<TransPackage> getAllTransPackage(){
+		return transPackageDao.getAll();
+	}
 
 	@Override
 	public Response getTransPackage(String id) {
@@ -321,13 +364,49 @@ public class DomainService implements IDomainService {
 		}
 	}
 
+	/**
+	 * ldq
+	 * 保存包裹
+	 */
 	@Override
 	public Response saveTransPackage(TransPackage obj) {
+		TransPackage tg = null;
+		
+		try {
+			tg = transPackageDao.get(obj.getID());
+		} catch (Exception e1) {
+			System.out.println(e1);
+		}
+		
+		if (tg != null) {
+			return Response.ok("Error").header("EntityClass", "R_TransPackage").build();
+		}
+		
 		try {
 			transPackageDao.save(obj);
 			return Response.ok(obj).header("EntityClass", "R_TransPackage").build();
 		} catch (Exception e) {
-			return Response.serverError().entity(e.getMessage()).build();
+			return Response.ok("Error").entity(e.getMessage()).build();
 		}
+	}
+	
+	
+	/**
+	 * ldq
+	 * 编辑包裹
+	 */
+	@Override
+	public Response editTransPackage(TransPackage obj) {
+		try {
+			transPackageDao.save(obj);
+			return Response.ok(obj).header("EntityClass", "R_TransPackage").build();
+		} catch (Exception e) {
+			return Response.ok("Error").entity(e.getMessage()).build();
+		}
+	}
+	
+	 //快件历史=======================================================================
+	public TransPackage findTransPackagebyExpressSheetId(String id) {
+		return transPackageDao.findbyExpressSheetId(id);
 	}
 }

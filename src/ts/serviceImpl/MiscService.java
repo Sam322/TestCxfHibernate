@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.apache.tomcat.jni.User;
+
 import ts.daoImpl.CustomerInfoDao;
 import ts.daoImpl.RegionDao;
 import ts.daoImpl.TransNodeDao;
@@ -16,14 +18,14 @@ import ts.model.TransNode;
 import ts.model.UserInfo;
 import ts.serviceInterface.IMiscService;
 
-public class MiscService implements IMiscService{
-	//TransNodeCatalog nodes;	//自己做的缓存和重定向先不要了,用Hibernate缓存对付一下，以后加上去
-	//RegionCatalog regions;
+public class MiscService implements IMiscService {
+	// TransNodeCatalog nodes; //自己做的缓存和重定向先不要了,用Hibernate缓存对付一下，以后加上去
+	// RegionCatalog regions;
 	private TransNodeDao transNodeDao;
 	private RegionDao regionDao;
 	private CustomerInfoDao customerInfoDao;
 	private UserInfoDao userInfoDao;
-	
+
 	public TransNodeDao getTransNodeDao() {
 		return transNodeDao;
 	}
@@ -47,6 +49,7 @@ public class MiscService implements IMiscService{
 	public void setCustomerInfoDao(CustomerInfoDao dao) {
 		this.customerInfoDao = dao;
 	}
+
 	public UserInfoDao getUserInfoDao() {
 		return userInfoDao;
 	}
@@ -55,40 +58,36 @@ public class MiscService implements IMiscService{
 		this.userInfoDao = dao;
 	}
 
-	public MiscService(){
+	public MiscService() {
 //		nodes = new TransNodeCatalog();
 //		nodes.Load();
 //		regions = new RegionCatalog();
 //		regions.Load();
 	}
 
-	/*@Override
-	public TransNode getNode(String code) {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
+	/*
+	 * @Override public TransNode getNode(String code) { // TODO Auto-generated
+	 * method stub return null; }
+	 */
 	/**
-	 * ldq
-	 * 通过id查询服务网点
+	 * ldq 通过id查询服务网点
 	 */
 	@Override
 	public Response getNode(String code) {
 		TransNode tn = transNodeDao.get(code);
-		return Response.ok(tn).header("EntityClass", "TransNode").build(); 
+		return Response.ok(tn).header("EntityClass", "TransNode").build();
 	}
-	
+
 	/**
-	 * ldq
-	 * 获取所有服务网点
+	 * ldq 获取所有服务网点
 	 */
 	@Override
 	public List<TransNode> getAllNodesList() {
 		return transNodeDao.getAll();
 	}
-	
+
 	/**
-	 * ldq
-	 * 通过地区代码获取服务网点
+	 * ldq 通过地区代码获取服务网点
 	 */
 	@Override
 	public List<TransNode> getNodesListByRegionCode(String regionCode) {
@@ -96,50 +95,45 @@ public class MiscService implements IMiscService{
 		return transNodeDao.findByRegionCode(regionCode);
 	}
 
-
 	/**
-	 * ldq
-	 * 新建服务网点
+	 * ldq 新建服务网点
 	 */
 	@Override
 	public Response saveTransNode(TransNode obj) {
 		// TODO Auto-generated method stub
 		System.out.println("调用了saveTransNode方法");
-		try{
-			transNodeDao.save(obj);			
-			return Response.ok("Saved").header("EntityClass", "R_TransNode").build(); 
-		}
-		catch(Exception e)
-		{
-			return Response.serverError().entity(e.getMessage()).build(); 
+		try {
+			transNodeDao.save(obj);
+			return Response.ok("Saved").header("EntityClass", "R_TransNode").build();
+		} catch (Exception e) {
+			return Response.serverError().entity(e.getMessage()).build();
 		}
 	}
-	
+
 	/**
-	 *ldq
-	 *删除服务网点 
+	 * ldq 删除服务网点
 	 */
 	@Override
 	public Response deleteTransNode(String id) {
 		transNodeDao.removeById(id);
 		return Response.ok("Deleted").header("EntityClass", "D_TransNode").build();
 	}
-	
+
 	@Override
 	public List<TransNode> getNodesList(String regionCode, int type) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-    //===============================================================================================
-	
+	// ===============================================================================================
+
 	/**
-	 * ldq
-	 * 获取所有顾客信息
+	 * ldq 获取所有顾客信息
 	 */
 	@Override
-	public List<CustomerInfo> getAllCustomer(){
+	public List<CustomerInfo> getAllCustomer() {
 		return customerInfoDao.getAll();
 	}
+
 	@Override
 	public List<CustomerInfo> getCustomerListByName(String name) {
 //		List<CustomerInfo> listci = customerInfoDao.findByName(name);
@@ -170,36 +164,32 @@ public class MiscService implements IMiscService{
 //		try{
 //			cstm.setRegionString(regionDao.getRegionNameByID(cstm.getRegionCode()));	//这部分功能放到DAO里去了
 //		}catch(Exception e){}
-		return Response.ok(cstm).header("EntityClass", "CustomerInfo").build(); 
+		return Response.ok(cstm).header("EntityClass", "CustomerInfo").build();
 	}
-	
+
 	@Override
 	public Response deleteCustomerInfo(int id) {
 		customerInfoDao.removeById(id);
-		return Response.ok("Deleted").header("EntityClass", "D_CustomerInfo").build(); 
+		return Response.ok("Deleted").header("EntityClass", "D_CustomerInfo").build();
 	}
 
 	@Override
 	public Response saveCustomerInfo(CustomerInfo obj) {
 		System.out.println("运行了saveCustomerInfo方法");
-		try{
-			customerInfoDao.save(obj);			
-			return Response.ok(obj).header("EntityClass", "R_CustomerInfo").build(); 
-		}
-		catch(Exception e)
-		{
-			return Response.serverError().entity(e.getMessage()).build(); 
+		try {
+			customerInfoDao.save(obj);
+			return Response.ok(obj).header("EntityClass", "R_CustomerInfo").build();
+		} catch (Exception e) {
+			return Response.serverError().entity(e.getMessage()).build();
 		}
 	}
-	
-	
-	
+
 	@Override
-	public List<CodeNamePair> getProvinceList() {		
+	public List<CodeNamePair> getProvinceList() {
 		List<Region> listrg = regionDao.getProvinceList();
 		List<CodeNamePair> listCN = new ArrayList<CodeNamePair>();
-		for(Region rg : listrg){
-			CodeNamePair cn = new CodeNamePair(rg.getORMID(),rg.getPrv());
+		for (Region rg : listrg) {
+			CodeNamePair cn = new CodeNamePair(rg.getORMID(), rg.getPrv());
 			listCN.add(cn);
 		}
 		return listCN;
@@ -209,8 +199,8 @@ public class MiscService implements IMiscService{
 	public List<CodeNamePair> getCityList(String prv) {
 		List<Region> listrg = regionDao.getCityList(prv);
 		List<CodeNamePair> listCN = new ArrayList<CodeNamePair>();
-		for(Region rg : listrg){
-			CodeNamePair cn = new CodeNamePair(rg.getORMID(),rg.getCty());
+		for (Region rg : listrg) {
+			CodeNamePair cn = new CodeNamePair(rg.getORMID(), rg.getCty());
 			listCN.add(cn);
 		}
 		return listCN;
@@ -220,8 +210,8 @@ public class MiscService implements IMiscService{
 	public List<CodeNamePair> getTownList(String city) {
 		List<Region> listrg = regionDao.getTownList(city);
 		List<CodeNamePair> listCN = new ArrayList<CodeNamePair>();
-		for(Region rg : listrg){
-			CodeNamePair cn = new CodeNamePair(rg.getORMID(),rg.getTwn());
+		for (Region rg : listrg) {
+			CodeNamePair cn = new CodeNamePair(rg.getORMID(), rg.getTwn());
 			listCN.add(cn);
 		}
 		return listCN;
@@ -240,66 +230,69 @@ public class MiscService implements IMiscService{
 	@Override
 	public void CreateWorkSession(int uid) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public boolean doLogin(int uid, String pwd) {
-		// TODO Auto-generated method stub
-		return false;
+	public UserInfo doLogin(String telcode, String pwd) {
+		List<UserInfo> listui = userInfoDao.findByTelCode(telcode);
+		if (listui.get(0).getPWD().equals(pwd))
+			return listui.get(0);
+		else
+			return null;
 	}
 
 	@Override
 	public void doLogOut(int uid) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void RefreshSessionList() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	//tzx
+
+	// tzx
 	@Override
 	public Response saveUserInfo(UserInfo obj) {
 		System.out.println("调用了saveUserInfo方法");
-		
-		try{
-			userInfoDao.save(obj);			
-			return Response.ok(obj).header("EntityClass", "R_UserInfo").build(); 
+
+		try {
+			userInfoDao.save(obj);
+			return Response.ok(obj).header("EntityClass", "R_UserInfo").build();
+		} catch (Exception e) {
+			return Response.serverError().entity(e.getMessage()).build();
 		}
-		catch(Exception e)
-		{
-			return Response.serverError().entity(e.getMessage()).build(); 
-		}
-		
+
 	}
-	
-	//tzx
+
+	// tzx
 	@Override
 	public List<UserInfo> getAllUserInfo() {
 		return userInfoDao.getAll();
 	}
 
+	// ldq
 	@Override
-	public boolean doRegister(String telCode, String pwd,String dptid) {
+	public UserInfo getUserInfo(int uid) {
+		return userInfoDao.get(uid);
+	}
+
+	@Override
+	public boolean doRegister(String telCode, String pwd, String dptid) {
 		UserInfo userInfo = new UserInfo();
 		userInfo.setTelCode(telCode);
 		userInfo.setPWD(pwd);
 		userInfo.setDptID(dptid);
 		userInfo.setStatus(0);
 		List<UserInfo> userList = userInfoDao.findByTelCode(telCode);
-		if (userList.size()!=0) {
+		if (userList.size() != 0) {
 			return false;
 		}
 		userInfoDao.save(userInfo);
 		return true;
 	}
-
-
-
-
 
 }
