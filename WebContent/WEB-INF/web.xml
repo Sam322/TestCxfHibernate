@@ -77,5 +77,4 @@
 	<session-config>
 		<session-timeout>1380</session-timeout>
 	</session-config>
-	<absolute-ordering />
 </web-app>
