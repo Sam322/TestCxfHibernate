@@ -16,5 +16,17 @@ public class TransNodeDao extends BaseDao<TransNode, String>{
         Assert.hasText(region_code);
         return findBy("regionCode", region_code, "nodeName", true);
 	}
+	
+	//lyy 新增
+	public List<TransNode> findById(String id) {
+		Assert.hasText(id);
+		return findLike("ID", id+"%", "ID", true);
+	}
+	
+	//lyy新增
+	public List<TransNode> findByNodeName(String NodeName) {
+		Assert.hasText(NodeName);
+		return findLike("nodeName",NodeName,"ID",true);
+	}
 
 }

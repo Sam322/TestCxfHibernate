@@ -5,17 +5,17 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.apache.tomcat.jni.User;
-
 import ts.daoImpl.CustomerInfoDao;
 import ts.daoImpl.RegionDao;
 import ts.daoImpl.TransNodeDao;
 import ts.daoImpl.UserInfoDao;
+import ts.daoImpl.UsersPackageDao;
 import ts.model.CodeNamePair;
 import ts.model.CustomerInfo;
 import ts.model.Region;
 import ts.model.TransNode;
 import ts.model.UserInfo;
+import ts.model.UsersPackage;
 import ts.serviceInterface.IMiscService;
 
 public class MiscService implements IMiscService {
@@ -25,6 +25,7 @@ public class MiscService implements IMiscService {
 	private RegionDao regionDao;
 	private CustomerInfoDao customerInfoDao;
 	private UserInfoDao userInfoDao;
+	private UsersPackageDao usersPackageDao;
 
 	public TransNodeDao getTransNodeDao() {
 		return transNodeDao;
@@ -72,11 +73,11 @@ public class MiscService implements IMiscService {
 	/**
 	 * ldq 通过id查询服务网点
 	 */
-	@Override
+	/*@Override
 	public Response getNode(String code) {
 		TransNode tn = transNodeDao.get(code);
 		return Response.ok(tn).header("EntityClass", "TransNode").build();
-	}
+	}*/
 
 	/**
 	 * ldq 获取所有服务网点
@@ -119,11 +120,11 @@ public class MiscService implements IMiscService {
 		return Response.ok("Deleted").header("EntityClass", "D_TransNode").build();
 	}
 
-	@Override
+	/*@Override
 	public List<TransNode> getNodesList(String regionCode, int type) {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}*/
 	// ===============================================================================================
 
 	/**
@@ -294,5 +295,117 @@ public class MiscService implements IMiscService {
 		userInfoDao.save(userInfo);
 		return true;
 	}
+	
+	
+	//lyy 修改
+		@Override
+		public TransNode getNode(String code) {
+			TransNode ts = null;
+			try {
+				ts = transNodeDao.get(code);
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			// TODO Auto-generated method stub
+			return ts;
+		}
+
+		//lyy 修改 
+		//根据所在位置和类型搜索网点信息
+		@Override
+		public List<TransNode> getNodesList(String regionCode, int type) {
+			
+			List<TransNode> listTS = transNodeDao.findByRegionCode(regionCode);  //根据regionCode得到附近网点的列表
+			for(TransNode transNode: listTS) {
+				if(transNode.getNodeType() != type) {
+					listTS.remove(transNode);
+				}
+			}
+			return listTS;
+		}
+		
+		//lyy 新增 获取网点信息
+		@Override
+		public List<TransNode> getTransNodeByNodeName(String nodeName) {
+			// TODO Auto-generated method stub
+			
+			return transNodeDao.findByNodeName(nodeName);
+		}
+
+		//lyy 新增 获取网点信息
+		@Override
+		public List<TransNode> getTransNodeById(String id) {
+			// TODO Auto-generated method stub
+			return transNodeDao.findById(id);
+		}
+
+		//lyy 新增 获取网点信息
+		@Override
+		public List<TransNode> getTransNodeByRegion(String region) {
+			// TODO Auto-generated method stub
+			return transNodeDao.findByRegionCode(region);
+		}
+		
+		//lyy 新增userInfo接口
+		
+		public Response getUserInfoById(Integer uid) {
+			UserInfo userInfo = null;
+			try {
+				 userInfo = userInfoDao.get(uid);
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			return Response.ok(userInfo).header("EntityClass", "UserInfo").build(); 
+		}
+		
+		//lyy 新增getManagerByNodeID接口
+		public Response getManagerByNodeID(String nodeID) {
+			UserInfo userInfo = null;
+			List<UserInfo> list = null;
+			try {
+				 list=userInfoDao.getUserInfoByNodeID(nodeID);
+				 for(UserInfo userInfo2:list) {
+					 if(userInfo2.getURull() == 3) { //如果是网点的负责人
+						 return Response.ok(userInfo2).header("EntityClass", "UserInfo").build();
+					 }
+				 }
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			//没有找到负责人
+			return Response.ok(userInfo).header("EntityClass", "N_UserInfo").build(); 
+		}
+		
+		//lyy 新增 
+		public Response saveUsersPackage(UsersPackage usersPackage) {
+			try {
+				usersPackageDao.save(usersPackage);
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+			return Response.ok("添加成功！").header("EntityClass", "UsersPackage").build();
+		}
+		
+		//lyy 新增 
+		@Override
+		public Response getOneTransNodeById(String id) {
+			TransNode transNode = null;
+			try {
+				transNode = transNodeDao.get(id);
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+			if(transNode != null) return Response.ok(transNode).header("EntityClass", "E_TransNode").build();
+			else {
+				return Response.ok(transNode).header("EntityClass", "N_TransNode").build();
+			}
+		}
 
 }

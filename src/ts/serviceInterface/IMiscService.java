@@ -22,7 +22,7 @@ public interface IMiscService {
     @GET
     @Produces({MediaType.APPLICATION_JSON })
     @Path("/getNode/{NodeCode}") 
-	public Response getNode(@PathParam("NodeCode")String code);
+	public TransNode getNode(@PathParam("NodeCode")String code);
     
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -153,5 +153,42 @@ public interface IMiscService {
     public boolean doRegister(@PathParam("telcode") String telcode,@PathParam("pwd") String pwd,@PathParam("dptid") String dptid);
 	public void RefreshSessionList();
 
-	
+	//lyy 新增
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/getTransNodeByNodeName/{nodeName}") 
+    public List<TransNode> getTransNodeByNodeName(@PathParam("nodeName")String nodeName);
+    
+    //lyy新增
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/getTransNodeById/{id}") 
+    public List<TransNode> getTransNodeById(@PathParam("id")String id);
+    
+  //lyy新增
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/getTransNodeByRegion/{region}") 
+    public List<TransNode> getTransNodeByRegion(@PathParam("region")String region);
+    
+    //lyy新增 getOneTransNodeById
+  //lyy新增
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/getOneTransNodeById/{id}") 
+    public Response getOneTransNodeById(@PathParam("id")String id);
+  //===============================================================================================
+    
+    //lyy 新增userinfo接口
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/getUserInfoById/{uid}") 
+    public Response getUserInfoById(@PathParam("uid")Integer uid);
+    
+    
+    //lyy 新增通过网点ID得到负责人
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/getManagerByNodeID/{nodeId}") 
+    public Response getManagerByNodeID(@PathParam("nodeId")String nodeID);
 }

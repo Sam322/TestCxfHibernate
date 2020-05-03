@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
@@ -14,6 +15,9 @@ import ts.daoImpl.TransPackageContentDao;
 import ts.daoImpl.TransPackageDao;
 import ts.daoImpl.UserInfoDao;
 import ts.model.ExpressSheet;
+import ts.model.ListTransHistory;
+import ts.model.ListTransPackge;
+import ts.model.TransHistory;
 import ts.model.TransPackage;
 import ts.model.TransPackageContent;
 import ts.serviceInterface.IDomainService;
@@ -260,31 +264,23 @@ public class DomainService implements IDomainService {
 		return null;
 	}
 
-	public boolean MoveExpressIntoPackage(String id, String targetPkgId) {
-		TransPackage targetPkg = transPackageDao.get(targetPkgId);
-		if ((targetPkg.getStatus() > 0) && (targetPkg.getStatus() < 3)) { // 包裹的状态快点定义,打开的包裹或者货篮才能操作==================================================================
-			return false;
+	//lyy修改
+		public Response MoveExpressIntoPackage(String id, String targetPkgId) {
+			
+			TransPackage targetPkg = transPackageDao.get(targetPkgId);
+			if((targetPkg.getStatus() > 0) && (targetPkg.getStatus() < 3)){	//包裹的状态快点定义,打开的包裹或者货篮才能操作==================================================================
+				return Response.ok("fasle").header("EntityClass", "MoveExpressIntoPackage").build();
+			}
+
+			TransPackageContent pkg_add = new TransPackageContent();
+			pkg_add.setPkg(targetPkg);
+			pkg_add.setExpress(expressSheetDao.get(id));
+			pkg_add.setStatus(TransPackageContent.STATUS.STATUS_ACTIVE);
+			transPackageContentDao.save(pkg_add); 
+			return Response.ok("true").header("EntityClass", "MoveExpressIntoPackage").build();
 		}
 
-		TransPackageContent pkg_add = new TransPackageContent();
-		pkg_add.setPkg(targetPkg);
-		pkg_add.setExpress(expressSheetDao.get(id));
-		pkg_add.setStatus(TransPackageContent.STATUS.STATUS_ACTIVE);
-		transPackageContentDao.save(pkg_add);
-		return true;
-	}
 
-	public boolean MoveExpressFromPackage(String id, String sourcePkgId) {
-		TransPackage sourcePkg = transPackageDao.get(sourcePkgId);
-		if ((sourcePkg.getStatus() > 0) && (sourcePkg.getStatus() < 3)) {
-			return false;
-		}
-
-		TransPackageContent pkg_add = transPackageContentDao.get(id, sourcePkgId);
-		pkg_add.setStatus(TransPackageContent.STATUS.STATUS_OUTOF_PACKAGE);
-		transPackageContentDao.save(pkg_add);
-		return true;
-	}
 
 	public boolean MoveExpressBetweenPackage(String id, String sourcePkgId, String targetPkgId) {
 		// 需要加入事务机制
@@ -350,19 +346,6 @@ public class DomainService implements IDomainService {
 		return Response.ok(es).header("EntityClass", "TransPackage").build();
 	}
 
-	@Override
-	public Response newTransPackage(String id, int uid) {
-		try {
-			TransPackage npk = new TransPackage();
-			npk.setID(id);
-			// npk.setStatus(value);
-			npk.setCreateTime(new Date());
-			transPackageDao.save(npk);
-			return Response.ok(npk).header("EntityClass", "TransPackage").build();
-		} catch (Exception e) {
-			return Response.serverError().entity(e.getMessage()).build();
-		}
-	}
 
 	/**
 	 * ldq
@@ -409,4 +392,145 @@ public class DomainService implements IDomainService {
 	public TransPackage findTransPackagebyExpressSheetId(String id) {
 		return transPackageDao.findbyExpressSheetId(id);
 	}
+	
+	
+	//lyy 修改
+		public Response MoveExpressFromPackage(String id, String sourcePkgId) {
+			TransPackage sourcePkg = transPackageDao.get(sourcePkgId);
+			if((sourcePkg.getStatus() > 0) && (sourcePkg.getStatus() < 3)){
+				Response.ok("Deleted1").header("EntityClass", "MoveExpressFromPackage").build();
+			}
+
+			TransPackageContent pkg_add = transPackageContentDao.get(id, sourcePkgId);
+			pkg_add.setStatus(TransPackageContent.STATUS.STATUS_OUTOF_PACKAGE);
+			transPackageContentDao.save(pkg_add); 
+			return Response.ok("Deleted").header("EntityClass", "MoveExpressFromPackage").build();
+		}
+		
+		//lyy 修改
+		@Override
+		public Response newTransPackage(TransPackage transPackage) {
+			
+			TransPackage tpk = null;
+			try {
+				tpk = transPackageDao.get(transPackage.getID());
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			if(tpk != null) {
+				return Response.ok("包裹id已存在").header("EntityClass", "E_TransPackage").build(); 
+			}
+			try{
+				transPackageDao.save(transPackage);
+				return Response.ok(transPackage).header("EntityClass", "TransPackage").build(); 
+			}
+			catch(Exception e)
+			{
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+		}
+		
+		
+		//lyy 修改新建 作用：添加一个包裹历史
+		@Override
+		public Response addOneTransHistory(TransHistory transHistory) {
+			System.out.println("执行了这个方法addOneTransHistory");
+			TransPackage transPackage = transHistory.getPkg();
+			transHistory.setActTime(getCurrentDate());
+			if(transPackage == null) {
+				return Response.ok("把包裹不存在！").header("EntityClass", "N_TransPackage").build();
+			}
+			transHistoryDao.save(transHistory);
+			return Response.ok("ok").header("EntityClass", "TransPackage").build();
+		}
+		
+		//lyy 新建 作用：获取一个包裹的transHistorylist
+		@Override
+		public Set<TransHistory> getTransHistoryFromList(String pkgId) {
+			System.out.println("执行了这个方法getTransHistoryFromList");
+			TransPackage transPackage = transPackageDao.get(pkgId);
+			Set<TransHistory> transHistoryList = transPackage.getHistory();
+			return transHistoryList;
+		}
+		
+		//lyy 新建 确认包裹，改变包裹状态
+		@Override
+		public Response accPkgAndChangStatus(String pkgId) {
+			
+			System.out.println("执行了这个方法accPkgAndChangStatus");
+			TransPackage transPackage =transPackageDao.get(pkgId);
+			if(transPackage == null) {
+				return Response.ok("把包裹不存在！").header("EntityClass", "N_TransPackage").build();
+			}
+			transPackage.setStatus(3);  //3代表转运中心已确认。
+			transPackageDao.save(transPackage);
+			return Response.ok(transPackage).header("EntityClass", "TransPackage").build();	
+		}
+		
+		//lyy 新增 改变包裹状态为status
+		public Response changeTransPackgeStatus(TransPackage transPackage,int status) {
+			try {
+				transPackage.setStatus(status);
+				transPackageDao.save(transPackage);
+			} catch (Exception e) {
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+			return Response.ok(transPackage).header("EntityClass", "TransPackage").build();
+		}
+		
+		//lyy 新建
+		public Response saveTransHistoryList(ListTransHistory transHistories) {
+			System.out.println("执行了这个方法！saveTransHistoryList"+transHistories.toString());
+			Date date = getCurrentDate();
+			List<TransHistory> transHistories2 = transHistories.getTransHistoryList();
+			TransPackage transPackage = null;
+			try {
+				for(TransHistory transHistory: transHistories2) {
+					transHistory.setActTime(date);
+					transHistoryDao.save(transHistory);
+					//改变包裹状态
+					transPackage = transHistory.getPkg();
+					transPackage.setStatus(TransPackage.PKG_TRSNSIT);
+					transPackageDao.save(transPackage);
+				}
+			} catch (Exception e) {
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+			
+			return Response.ok("添加成功").header("EntityClass", "successed").build(); 
+		}
+		
+		//lyy新增 改变包裹列表中所有包裹状态为status
+		public Response changeTransPackageListStatus(ListTransPackge listTransPackge,int status) {
+			System.out.println("执行了这个方法！changeTransPackageListStatus"+status);
+			List<TransPackage> transPackages = listTransPackge.getTransPackageList();
+			try {
+				if(transPackages.size() != 0) {
+					for(TransPackage transPackage: transPackages) {
+						//System.out.println(transPackage.toString());
+						transPackage.setStatus(status);
+						transPackageDao.save(transPackage);
+					}
+				}
+			} catch (Exception e) {
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+			
+			return Response.ok("改变成功").header("EntityClass", "successed").build(); 
+			
+		}
+		
+		//lyy 新增
+		public Response getRecentOneTranHistory( TransPackage transPackage) {
+			List<TransHistory> transHistories=null;
+			TransHistory transHistory = null;
+			try {
+				transHistories = transHistoryDao.getPkgListOrderByAccTime(transPackage);
+				transHistory = transHistories.get(0);
+			} catch (Exception e) {
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+			return Response.ok(transHistory).header("EntityClass", "TransHistory").build();
+		}
+	
 }
