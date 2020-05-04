@@ -74,6 +74,10 @@
 	<bean id="transPackageContentDao" class="ts.daoImpl.TransPackageContentDao">
 		<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean>
+	
+	<bean id="usersPackageDao" class="ts.daoImpl.UsersPackageDao">
+	    <property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
 
 	<!-- REST服务的注解例子 -->
 	<jaxrs:server id="Service" address="/REST">
@@ -83,6 +87,7 @@
 				<property name="regionDao" ref="regionDao"></property>
 				<property name="customerInfoDao" ref="customerInfoDao"></property>
 				<property name="userInfoDao" ref="userInfoDao"></property>
+				<property name="usersPackageDao" ref="usersPackageDao"></property>
 			</bean>
 			<bean class="ts.serviceImpl.DomainService">
 				<property name="expressSheetDao" ref="expressSheetDao"></property>	<!-- 配置DomainService中的属性dao -->

@@ -59,6 +59,12 @@ public class MiscService implements IMiscService {
 		this.userInfoDao = dao;
 	}
 
+	public void setUsersPackageDao(UsersPackageDao usersPackageDao) {
+		this.usersPackageDao = usersPackageDao;
+	}
+	public UsersPackageDao getUsersPackageDao() {
+		return usersPackageDao;
+	}
 	public MiscService() {
 //		nodes = new TransNodeCatalog();
 //		nodes.Load();
@@ -310,6 +316,7 @@ public class MiscService implements IMiscService {
 			// TODO Auto-generated method stub
 			return ts;
 		}
+		
 
 		//lyy 修改 
 		//根据所在位置和类型搜索网点信息
@@ -407,5 +414,6 @@ public class MiscService implements IMiscService {
 				return Response.ok(transNode).header("EntityClass", "N_TransNode").build();
 			}
 		}
+		
 
 }

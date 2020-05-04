@@ -16,6 +16,7 @@ import ts.model.CustomerInfo;
 import ts.model.Region;
 import ts.model.TransNode;
 import ts.model.UserInfo;
+import ts.model.UsersPackage;
 
 @Path("/Misc")
 public interface IMiscService {
@@ -191,4 +192,11 @@ public interface IMiscService {
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Path("/getManagerByNodeID/{nodeId}") 
     public Response getManagerByNodeID(@PathParam("nodeId")String nodeID);
+    
+    //lyyÐÂÔö userPackage
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/saveUsersPackage") 
+    public Response saveUsersPackage(UsersPackage usersPackage);
 }
