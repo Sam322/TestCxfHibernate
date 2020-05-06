@@ -2,8 +2,6 @@ package ts.daoImpl;
 
 import java.util.List;
 
-import org.springframework.util.Assert;
-
 import ts.daoBase.BaseDao;
 import ts.model.TransHistory;
 import ts.model.TransPackage;

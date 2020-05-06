@@ -389,8 +389,15 @@ public class DomainService implements IDomainService {
 	}
 	
 	 //快件历史=======================================================================
+	//ldq
 	public TransPackage findTransPackagebyExpressSheetId(String id) {
 		return transPackageDao.findbyExpressSheetId(id);
+	}
+	//ldq
+	public List<TransHistory> getTransHistory(String id) {
+		TransPackage transPackage = transPackageDao.get(id);
+		System.out.println(transPackage);
+		return transHistoryDao.getPkgListOrderByAccTime(transPackage);
 	}
 	
 	

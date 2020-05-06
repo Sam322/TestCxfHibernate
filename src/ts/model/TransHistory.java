@@ -25,11 +25,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @org.hibernate.annotations.Proxy(lazy = false)
 @Table(name = "TransHistory")
+@XmlRootElement(name="TransHistory")
 public class TransHistory implements Serializable {
 	/**
 	 * 
@@ -120,8 +121,7 @@ public class TransHistory implements Serializable {
 	public void setPkg(TransPackage value) {
 		this.pkg = value;
 	}
-
-	@XmlTransient
+	
 	public TransPackage getPkg() {
 		return pkg;
 	}
