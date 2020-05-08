@@ -11,6 +11,7 @@ public class TransHistoryDao extends BaseDao<TransHistory,Integer> {
 		super(TransHistory.class);
 	}
 	
+	
 	public List<TransHistory> getPkgListOrderByAccTime(TransPackage transPackage) {
 		return findBy("pkg", transPackage, "actTime", false);
 	}

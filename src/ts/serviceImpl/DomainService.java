@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 
 import ts.daoImpl.ExpressSheetDao;
 import ts.daoImpl.TransHistoryDao;
+import ts.daoImpl.TransNodeDao;
 import ts.daoImpl.TransPackageContentDao;
 import ts.daoImpl.TransPackageDao;
 import ts.daoImpl.UserInfoDao;
@@ -18,6 +19,7 @@ import ts.model.ExpressSheet;
 import ts.model.ListTransHistory;
 import ts.model.ListTransPackge;
 import ts.model.TransHistory;
+import ts.model.TransNode;
 import ts.model.TransPackage;
 import ts.model.TransPackageContent;
 import ts.serviceInterface.IDomainService;
@@ -30,6 +32,7 @@ public class DomainService implements IDomainService {
 	private TransPackageContentDao transPackageContentDao;
 
 	private UserInfoDao userInfoDao;
+	private TransNodeDao transNodeDao;
 
 	public ExpressSheetDao getExpressSheetDao() {
 		return expressSheetDao;
@@ -390,14 +393,14 @@ public class DomainService implements IDomainService {
 	
 	 //快件历史=======================================================================
 	//ldq
-	public TransPackage findTransPackagebyExpressSheetId(String id) {
+	public List<TransPackage> findTransPackagebyExpressSheetId(String id) {
 		return transPackageDao.findbyExpressSheetId(id);
 	}
 	//ldq
-	public List<TransHistory> getTransHistory(String id) {
+	public TransHistory getTransHistory(String id) {
 		TransPackage transPackage = transPackageDao.get(id);
 		System.out.println(transPackage);
-		return transHistoryDao.getPkgListOrderByAccTime(transPackage);
+		return transHistoryDao.getPkgListOrderByAccTime(transPackage).get(0);
 	}
 	
 	
@@ -538,6 +541,21 @@ public class DomainService implements IDomainService {
 				return Response.serverError().entity(e.getMessage()).build(); 
 			}
 			return Response.ok(transHistory).header("EntityClass", "TransHistory").build();
+		}
+		
+		@Override
+		public List<ExpressSheet> getExpressListbytransnode(String id,int status) {
+			List<ExpressSheet> expressSheets = expressSheetDao.findBy("status", status, "ID", true);
+			System.out.println(id);
+			TransNode transNode = transNodeDao.get(id);
+			String regionCode = transNode.getRegionCode();
+			for (int i = 0; i < expressSheets.size(); i++) {
+				if (!regionCode.equals(expressSheets.get(i).getSender().getRegionCode())) {
+					expressSheets.remove(i);
+					i--;
+				}
+			}
+			return expressSheets;
 		}
 	
 }
