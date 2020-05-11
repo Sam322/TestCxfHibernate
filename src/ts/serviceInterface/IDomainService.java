@@ -291,6 +291,13 @@ public interface IDomainService {
   @Path("/getTransHistoryDetailList/{expressID}")
   public List<TransHistoryDetail> getTransHistoryDetailList(@PathParam("expressID")String expressID);
   
+//ldq 新增查询包裹的route
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON )
+  @Path("/getPackageRoute/{packageID}")
+  public List<PackageRoute> getPackageRoute(@PathParam("packageID")String packageID);
+  
   
   
   

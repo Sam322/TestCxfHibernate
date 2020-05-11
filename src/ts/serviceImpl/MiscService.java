@@ -1,10 +1,8 @@
 package ts.serviceImpl;
 
-import java.awt.Transparency;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import ts.daoImpl.CustomerInfoDao;
