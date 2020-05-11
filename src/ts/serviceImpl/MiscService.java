@@ -1,8 +1,10 @@
 package ts.serviceImpl;
 
+import java.awt.Transparency;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import ts.daoImpl.CustomerInfoDao;
@@ -12,8 +14,10 @@ import ts.daoImpl.UserInfoDao;
 import ts.daoImpl.UsersPackageDao;
 import ts.model.CodeNamePair;
 import ts.model.CustomerInfo;
+import ts.model.ListTransPackge;
 import ts.model.Region;
 import ts.model.TransNode;
+import ts.model.TransPackage;
 import ts.model.UserInfo;
 import ts.model.UsersPackage;
 import ts.serviceInterface.IMiscService;
@@ -388,6 +392,7 @@ public class MiscService implements IMiscService {
 		
 		//lyy 新增 
 		public Response saveUsersPackage(UsersPackage usersPackage) {
+			System.out.println("执行了这个方法！saveUsersPackage"+usersPackage.toString());
 			try {
 				usersPackageDao.save(usersPackage);
 			} catch (Exception e) {
@@ -415,5 +420,24 @@ public class MiscService implements IMiscService {
 			}
 		}
 		
+		//lyy 新增
+		public Response saveUsersPackageList(ListTransPackge listTransPackge,int uid) {
+			List<TransPackage> lTransPackages = listTransPackge.getTransPackageList();
+			try {
+				UserInfo userInfo = userInfoDao.get(uid);
+				if(lTransPackages.size() != 0) {
+					for(TransPackage transPackage : lTransPackages) {
+						UsersPackage usersPackage = new UsersPackage();
+						usersPackage.setPkg(transPackage);
+						usersPackage.setUserU(userInfo);
+						usersPackageDao.save(usersPackage);
+					}
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+			return Response.ok("修改成功").header("EntityClass", "ListUsersPackage").build();
+		}
 
 }

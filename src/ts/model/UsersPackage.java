@@ -54,9 +54,9 @@ public class UsersPackage implements Serializable {
 	@JoinColumns({ @JoinColumn(name="UserUID", referencedColumnName="UID", nullable=false) })	
 	private UserInfo userU;
 	
-	@OneToOne(targetEntity=TransPackage.class, fetch=FetchType.LAZY)	
+	@ManyToOne(targetEntity=TransPackage.class, fetch=FetchType.LAZY)	
 	@org.hibernate.annotations.Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.LOCK})	
-	@JoinColumns({ @JoinColumn(name="PackageID", nullable=false) })	
+	@JoinColumns({ @JoinColumn(name="PackageID",referencedColumnName = "ID", nullable=false) })	
 	private TransPackage pkg;
 	
 	public void setSN(int value) {
@@ -83,7 +83,6 @@ public class UsersPackage implements Serializable {
 		this.pkg = value;
 	}
 	
-	@XmlTransient
 	public TransPackage getPkg() {
 		return pkg;
 	}

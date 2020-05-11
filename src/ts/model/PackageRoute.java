@@ -100,7 +100,6 @@ public class PackageRoute implements Serializable {
 	public void setPkg(TransPackage value) {
 		this.pkg = value;
 	}
-	@XmlTransient
 	public TransPackage getPkg() {
 		return pkg;
 	}

@@ -15,7 +15,9 @@ import javax.ws.rs.core.Response;
 import ts.model.ExpressSheet;
 import ts.model.ListTransHistory;
 import ts.model.ListTransPackge;
+import ts.model.PackageRoute;
 import ts.model.TransHistory;
+import ts.model.TransHistoryDetail;
 import ts.model.TransPackage;
 
 @Path("/Domain")	//业务操作
@@ -109,7 +111,7 @@ public interface IDomainService {
 	public List<TransPackage> getTransPackageList(@PathParam("Property")String property, @PathParam("Restrictions")String restrictions, @PathParam("Value")String value);
 
     @GET
-    @Produces({MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Path("/getTransPackage/{id}") 
 	public Response getTransPackage(@PathParam("id")String id);
 
@@ -158,11 +160,26 @@ public interface IDomainService {
   public Response MoveExpressFromPackage(@PathParam("id")String id, @PathParam("targetPkgId")String sourcePkgId);
   
   //lyy新增
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/DeleteExpressIntoPackage/{id}/{targetPkgId}") 
+  public Response DeleteExpressFromPackage(@PathParam("id")String id, @PathParam("targetPkgId")String sourcePkgId);
+  
+  
+  //lyy新增
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
   @Path("/addOneTransHistory")
   public Response addOneTransHistory(TransHistory transHistory);
+  
+//  //lyy 新增
+//  @GET
+//  @Consumes(MediaType.APPLICATION_JSON)
+//  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+//  @Path("/getTransHistory/{pkgId}")
+//  public Response getTransHistory(@PathParam("pkgId")String pkgId);
   
   //lyy新增
   @GET
@@ -190,8 +207,8 @@ public interface IDomainService {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-  @Path("/changeTransPackgeStatus/{status}")
-  public Response changeTransPackgeStatus(TransPackage transPackage,@PathParam("status")int status);
+  @Path("/changeTransPackageStatus/{status}")
+  public Response changeTransPackageStatus(TransPackage transPackage,@PathParam("status")int status);
   
   //lyy 新增
   @POST
@@ -200,11 +217,80 @@ public interface IDomainService {
   @Path("/changeTransPackageListStatus/{status}")
   public Response changeTransPackageListStatus(ListTransPackge listTransPackge,@PathParam("status")int status);
   
+//lyy 新增
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/changeExpressStatusInTransPackageList/{yuan_status}/{mubiao_status}")
+  public Response changeExpressStatusInTransPackageList(ListTransPackge listTransPackge,@PathParam("yuan_status") int yuan_status,@PathParam("mubiao_status") int mubiao_status);
   //lyy 新增得到最近的一条history记录
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
   @Path("/getRecentOneTranHistory")
   public Response getRecentOneTranHistory(TransPackage transPackage);
-    
+  
+  //lyy 新增saveOneTransPackge
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/saveOneTransPackage")
+  public Response saveOneTransPackage(TransPackage transPackage);
+  
+  //lyy 新增 保存packageRoute
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/saveOnePackageRoute")
+  public Response saveOnePackageRoute(PackageRoute packageRoute);
+  
+  //新增保存listpacakgeroute
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/saveListPackageRoute/{x}/{y}")
+  public Response saveListPackageRoute(ListTransPackge tListTransPackge,@PathParam("x") float x,@PathParam("y")float y);
+  
+  //lyy 新增 获取pacakgeContent
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/getTransPackageContent/{pkgID}/{expressID}")
+  public Response getTransPackageContent(@PathParam("pkgID")String pkgID,@PathParam("expressID")String expressID);
+  
+  //lyy 新增改变包裹里的快件状态
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/changeExpressStatusInPackage/{pkgID}/{expressID}/{status}")
+  public Response changeExpressStatusInPackage(@PathParam("pkgID")String pkgID,@PathParam("expressID")String expressID,@PathParam("status")int status);
+  
+  
+  //lyy 新增
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/changeExpressStatusInTransPackage/{pkgID}/{status}")
+  public Response changeExpressStatusInTransPackage(@PathParam("pkgID")String pkgID,@PathParam("status")int status);
+  
+  //lyy 新增
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/getTransHistoryDetailList/{expressID}")
+  public List<TransHistoryDetail> getTransHistoryDetailList(@PathParam("expressID")String expressID);
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }

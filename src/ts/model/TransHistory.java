@@ -26,7 +26,7 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+
 
 @Entity
 @org.hibernate.annotations.Proxy(lazy = false)
@@ -123,7 +123,7 @@ public class TransHistory implements Serializable {
 		this.pkg = value;
 	}
 
-	@XmlTransient
+
 	public TransPackage getPkg() {
 		return pkg;
 	}

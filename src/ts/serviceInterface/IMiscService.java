@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 import ts.model.CodeNamePair;
 import ts.model.CustomerInfo;
+import ts.model.ListTransPackge;
 import ts.model.Region;
 import ts.model.TransNode;
 import ts.model.UserInfo;
@@ -199,4 +200,12 @@ public interface IMiscService {
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Path("/saveUsersPackage") 
     public Response saveUsersPackage(UsersPackage usersPackage);
+    
+    //lyy ÐÂÔö±£´ælistuserpackage
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/saveUsersPackageList/{uid}") 
+    public Response saveUsersPackageList(ListTransPackge listTransPackge,@PathParam("uid")int uid);
+    
 }

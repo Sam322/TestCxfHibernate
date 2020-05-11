@@ -18,6 +18,7 @@ import java.util.Date;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @org.hibernate.annotations.Proxy(lazy=false)
 @Table(name="TransPackage")
@@ -40,8 +41,8 @@ public class TransPackage implements Serializable {
 	
 	@Column(name="ID", nullable=false)	
 	@Id	
-	//@GeneratedValue(generator="MODEL_TRANSPACKAGE_ID_GENERATOR")	
-	//@org.hibernate.annotations.GenericGenerator(name="MODEL_TRANSPACKAGE_ID_GENERATOR", strategy="assigned")	
+//	@GeneratedValue(generator="MODEL_TRANSPACKAGE_ID_GENERATOR")	
+//	@org.hibernate.annotations.GenericGenerator(name="MODEL_TRANSPACKAGE_ID_GENERATOR", strategy="assigned")	
 	private String ID;
 	
 	@Column(name="SourceNode", nullable=true, length=8)	
@@ -61,9 +62,14 @@ public class TransPackage implements Serializable {
 	@org.hibernate.annotations.LazyCollection(org.hibernate.annotations.LazyCollectionOption.TRUE)	
 	private java.util.Set<PackageRoute> route = new java.util.HashSet<PackageRoute>();
 	
-	@OneToOne(mappedBy="pkg", targetEntity=UsersPackage.class, fetch=FetchType.LAZY)	
+	//lyy ÐÞ¸Ä
+//	@OneToOne(mappedBy="pkg", targetEntity=UsersPackage.class, fetch=FetchType.LAZY)	
+//	@org.hibernate.annotations.Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.LOCK})	
+//	private UsersPackage user;
+	@OneToMany(mappedBy="pkg", targetEntity=UsersPackage.class)	
 	@org.hibernate.annotations.Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.LOCK})	
-	private UsersPackage user;
+	@org.hibernate.annotations.LazyCollection(org.hibernate.annotations.LazyCollectionOption.TRUE)
+	private java.util.Set<UsersPackage> user = new java.util.HashSet<UsersPackage>();
 	
 	@OneToMany(mappedBy="pkg", targetEntity=TransPackageContent.class)	
 	@org.hibernate.annotations.Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.LOCK})	
@@ -123,23 +129,33 @@ public class TransPackage implements Serializable {
 		this.route = value;
 	}
 	
+	@XmlTransient
 	public java.util.Set<PackageRoute> getRoute() {
 		return route;
 	}
 	
-	
-	public void setUser(UsersPackage value) {
-		this.user = value;
+	public void setUser(java.util.Set<UsersPackage> user) {
+		this.user = user;
 	}
-	
-	public UsersPackage getUser() {
+	@XmlTransient
+	public java.util.Set<UsersPackage> getUser() {
 		return user;
 	}
+	
+//	public void setUser(UsersPackage value) {
+//		this.user = value;
+//	}
+//	
+//	@XmlTransient
+//	public UsersPackage getUser() {
+//		return user;
+//	}
 	
 	public void setContent(java.util.Set<TransPackageContent> value) {
 		this.content = value;
 	}
 	
+	@XmlTransient
 	public java.util.Set<TransPackageContent> getContent() {
 		return content;
 	}
@@ -149,6 +165,7 @@ public class TransPackage implements Serializable {
 		this.history = value;
 	}
 	
+	@XmlTransient
 	public java.util.Set<TransHistory> getHistory() {
 		return history;
 	}
@@ -172,7 +189,9 @@ public class TransPackage implements Serializable {
 			sb.append("Status=").append(getStatus()).append(" ");
 			sb.append("Route.size=").append(getRoute().size()).append(" ");
 			if (getUser() != null)
-				sb.append("User.Persist_ID=").append(getUser().toString(true)).append(" ");
+				//lyy ÐÞ¸Ä
+				//sb.append("User.Persist_ID=").append(getUser().toString(true)).append(" ");
+				sb.append("User.size=").append(getUser().size()).append(" ");
 			else
 				sb.append("User=null ");
 			sb.append("Content.size=").append(getContent().size()).append(" ");

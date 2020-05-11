@@ -26,4 +26,19 @@ public class TransPackageDao extends BaseDao<TransPackage,String> {
 		System.out.println(list);
 		return list.get(0);
 	}
+	
+	public List<TransPackage> findbyExpressSheetIdList(String ExpressSheetId) {
+		/*
+		String sql = "{alias}.ID in (select ExpressID from TransPackageContent where Status = 0 and PackageID = '"+pkg_id+"')";
+		List<ExpressSheet> list = new ArrayList<ExpressSheet>();
+		list = findBy("ID", true, Restrictions.sqlRestriction(sql));		
+		return list;
+		 */
+		String sql = "{alias}.ID in (select PackageID from TransPackageContent where  ExpressID = \'"+ExpressSheetId+ "\')";
+		List<TransPackage> list = new ArrayList<TransPackage>();
+		list = findBy("ID", true, Restrictions.sqlRestriction(sql));
+		System.out.println(sql);
+		System.out.println(list);
+		return list;
+	}
 }

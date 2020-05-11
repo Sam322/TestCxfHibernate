@@ -7,19 +7,27 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import sun.net.www.content.text.plain;
 import ts.daoImpl.ExpressSheetDao;
+import ts.daoImpl.PackageRouteDao;
 import ts.daoImpl.TransHistoryDao;
+import ts.daoImpl.TransNodeDao;
 import ts.daoImpl.TransPackageContentDao;
 import ts.daoImpl.TransPackageDao;
 import ts.daoImpl.UserInfoDao;
 import ts.model.ExpressSheet;
 import ts.model.ListTransHistory;
 import ts.model.ListTransPackge;
+import ts.model.PackageRoute;
 import ts.model.TransHistory;
+import ts.model.TransHistoryDetail;
+import ts.model.TransNode;
 import ts.model.TransPackage;
 import ts.model.TransPackageContent;
+import ts.model.UserInfo;
 import ts.serviceInterface.IDomainService;
 
 public class DomainService implements IDomainService {
@@ -28,15 +36,29 @@ public class DomainService implements IDomainService {
 	private TransPackageDao transPackageDao;
 	private TransHistoryDao transHistoryDao;
 	private TransPackageContentDao transPackageContentDao;
-
+	private PackageRouteDao packageRouteDao;
 	private UserInfoDao userInfoDao;
+	private TransNodeDao transNodeDao;
 
+	public TransNodeDao getTransNodeDao() {
+		return transNodeDao;
+	}
+	public void setTransNodeDao(TransNodeDao transNodeDao) {
+		this.transNodeDao = transNodeDao;
+	}
 	public ExpressSheetDao getExpressSheetDao() {
 		return expressSheetDao;
 	}
 
 	public void setExpressSheetDao(ExpressSheetDao dao) {
 		this.expressSheetDao = dao;
+	}
+	public PackageRouteDao getPackageRouteDao() {
+		return packageRouteDao;
+	}
+
+	public void setPackageRouteDao(PackageRouteDao packageRouteDao) {
+		this.packageRouteDao = packageRouteDao;
 	}
 
 	public TransPackageDao getTransPackageDao() {
@@ -146,7 +168,11 @@ public class DomainService implements IDomainService {
 	@Override
 	public List<ExpressSheet> getExpressListInPackage(String packageId) {
 		List<ExpressSheet> list = new ArrayList<ExpressSheet>();
-		list = expressSheetDao.getListInPackage(packageId);
+		try {
+			list = expressSheetDao.getListInPackage(packageId);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		return list;
 	}
 
@@ -250,7 +276,7 @@ public class DomainService implements IDomainService {
 			}
 			nes.setAccepter(String.valueOf(uid));
 			nes.setAccepteTime(getCurrentDate());
-			nes.setStatus(ExpressSheet.STATUS.STATUS_TRANSPORT);
+			nes.setStatus(ExpressSheet.STATUS.STATUS_DAIZHUAYUN); //待揽收后待转运
 			expressSheetDao.save(nes);
 			return Response.ok(nes).header("EntityClass", "ExpressSheet").build();
 		} catch (Exception e) {
@@ -342,7 +368,13 @@ public class DomainService implements IDomainService {
 
 	@Override
 	public Response getTransPackage(String id) {
-		TransPackage es = transPackageDao.get(id);
+		TransPackage es = null;
+		try {
+			es = transPackageDao.get(id);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		if(es == null) return Response.ok("包裹不存在！").header("EntityClass", "N_TransPackage").build();
 		return Response.ok(es).header("EntityClass", "TransPackage").build();
 	}
 
@@ -394,6 +426,7 @@ public class DomainService implements IDomainService {
 	}
 	
 	
+	
 	//lyy 修改
 		public Response MoveExpressFromPackage(String id, String sourcePkgId) {
 			TransPackage sourcePkg = transPackageDao.get(sourcePkgId);
@@ -407,31 +440,19 @@ public class DomainService implements IDomainService {
 			return Response.ok("Deleted").header("EntityClass", "MoveExpressFromPackage").build();
 		}
 		
-		//lyy 修改
-		@Override
-		public Response newTransPackage(TransPackage transPackage) {
-			
-			TransPackage tpk = null;
-			try {
-				tpk = transPackageDao.get(transPackage.getID());
-			} catch (Exception e) {
-				// TODO: handle exception
+	//lyy 新增
+		public Response DeleteExpressFromPackage(String id,String PkgId) {
+			TransPackage sourcePkg = transPackageDao.get(PkgId);
+			if((sourcePkg.getStatus()!= TransPackage.PKG_NEW)){
+				Response.ok("Deleted1").header("EntityClass", "MoveExpressFromPackage").build();
 			}
-			if(tpk != null) {
-				return Response.ok("包裹id已存在").header("EntityClass", "E_TransPackage").build(); 
-			}
-			try{
-				transPackageDao.save(transPackage);
-				return Response.ok(transPackage).header("EntityClass", "TransPackage").build(); 
-			}
-			catch(Exception e)
-			{
-				return Response.serverError().entity(e.getMessage()).build(); 
-			}
+			TransPackageContent pkg_add = transPackageContentDao.get(id, PkgId);
+			transPackageContentDao.remove(pkg_add);
+			return Response.ok("Deleted").header("EntityClass", "MoveExpressFromPackage").build();
 		}
 		
 		
-		//lyy 修改新建 作用：添加一个包裹历史
+		//lyy 修改新建 作用：添加一个包裹历史addOneTransHistory
 		@Override
 		public Response addOneTransHistory(TransHistory transHistory) {
 			System.out.println("执行了这个方法addOneTransHistory");
@@ -441,8 +462,9 @@ public class DomainService implements IDomainService {
 				return Response.ok("把包裹不存在！").header("EntityClass", "N_TransPackage").build();
 			}
 			transHistoryDao.save(transHistory);
-			return Response.ok("ok").header("EntityClass", "TransPackage").build();
+			return Response.ok(transHistory).header("EntityClass", "TransHistory").build();
 		}
+		
 		
 		//lyy 新建 作用：获取一个包裹的transHistorylist
 		@Override
@@ -452,7 +474,42 @@ public class DomainService implements IDomainService {
 			Set<TransHistory> transHistoryList = transPackage.getHistory();
 			return transHistoryList;
 		}
-		
+
+//包裹相关
+		//lyy 修改
+	@Override
+	public Response newTransPackage(TransPackage transPackage) {
+					
+		TransPackage tpk = null;
+		try {
+			tpk = transPackageDao.get(transPackage.getID());
+		} catch (Exception e) {
+						// TODO: handle exception
+		}
+		if(tpk != null) {
+			return Response.ok("包裹id已存在").header("EntityClass", "E_TransPackage").build(); 
+		}
+		try{
+			transPackageDao.save(transPackage);
+			return Response.ok(transPackage).header("EntityClass", "TransPackage").build(); 
+		}
+		catch(Exception e)
+		{
+			return Response.serverError().entity(e.getMessage()).build(); 
+		}
+     }
+	//lyy 新增saveTransPackage
+	
+	public Response saveOneTransPackage(TransPackage transPackage) {
+		try {
+			transPackageDao.save(transPackage);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return Response.serverError().entity(e.getMessage()).build(); 
+		}
+		return Response.ok(transPackage).header("EntityClass", "R_TransPackage").build(); 
+	}
+				
 		//lyy 新建 确认包裹，改变包裹状态
 		@Override
 		public Response accPkgAndChangStatus(String pkgId) {
@@ -468,7 +525,8 @@ public class DomainService implements IDomainService {
 		}
 		
 		//lyy 新增 改变包裹状态为status
-		public Response changeTransPackgeStatus(TransPackage transPackage,int status) {
+		public Response changeTransPackageStatus(TransPackage transPackage,int status) {
+			System.out.println("执行了这个方法！changeTransPackageStatus"+transPackage.toString()+status);
 			try {
 				transPackage.setStatus(status);
 				transPackageDao.save(transPackage);
@@ -488,10 +546,10 @@ public class DomainService implements IDomainService {
 				for(TransHistory transHistory: transHistories2) {
 					transHistory.setActTime(date);
 					transHistoryDao.save(transHistory);
-					//改变包裹状态
-					transPackage = transHistory.getPkg();
-					transPackage.setStatus(TransPackage.PKG_TRSNSIT);
-					transPackageDao.save(transPackage);
+//					//改变包裹状态
+//					transPackage = transHistory.getPkg();
+//					transPackage.setStatus(TransPackage.PKG_TRSNSIT);
+//					transPackageDao.save(transPackage);
 				}
 			} catch (Exception e) {
 				return Response.serverError().entity(e.getMessage()).build(); 
@@ -519,9 +577,39 @@ public class DomainService implements IDomainService {
 			return Response.ok("改变成功").header("EntityClass", "successed").build(); 
 			
 		}
-		
-		//lyy 新增
+		//lyy 新增 改变包裹列表里的快件的状态
+		public Response changeExpressStatusInTransPackageList(ListTransPackge listTransPackge,int yuan_status,int mubiao_status) {
+			System.out.println("执行了这个方法！changeExpressStatusInTransPackageList"+yuan_status);
+			List<TransPackage> transPackages = listTransPackge.getTransPackageList();
+			try {
+				if(transPackages.size() != 0) {
+					for(TransPackage transPackage: transPackages) {
+						//System.out.println(transPackage.toString());
+						//一个包裹找到很多快件
+						List<TransPackageContent> list;
+						list = transPackageContentDao.getTransPackageContents(transPackage, yuan_status);
+						if(list.size() != 0) {
+							for(TransPackageContent pc :list) { //对于包裹里的每一个快件改变其状态
+								//System.out.println("执行了这个方法！"+pc.toString());
+								ExpressSheet es = pc.getExpress();
+								es.setStatus(mubiao_status);  //改变快件状态
+								expressSheetDao.save(es);
+							}
+						}
+						
+						
+					}
+				}
+			} catch (Exception e) {
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+			
+			return Response.ok("改变成功").header("EntityClass", "successed").build(); 
+			
+		}
+		//lyy 新增d
 		public Response getRecentOneTranHistory( TransPackage transPackage) {
+			System.out.println("执行了这个方法getRecentOneTranHistory");
 			List<TransHistory> transHistories=null;
 			TransHistory transHistory = null;
 			try {
@@ -531,6 +619,110 @@ public class DomainService implements IDomainService {
 				return Response.serverError().entity(e.getMessage()).build(); 
 			}
 			return Response.ok(transHistory).header("EntityClass", "TransHistory").build();
+		}
+	    //lyy 新增
+		public Response saveOnePackageRoute(PackageRoute packageRoute) {
+			System.out.println("执行了这个方法saveOnePackageRoute"+packageRoute.toString());
+			try {
+				packageRoute.setTm(getCurrentDate());
+				packageRouteDao.save(packageRoute);
+			} catch (Exception e) {
+				// TODO: handle exception
+				return Response.serverError().entity(e.getMessage()).build();  
+			}
+			
+			return Response.ok(packageRoute).header("EntityClass", "PackageRoute").build();
+		}
+		
+		//lyy新增
+		@Override
+		public Response saveListPackageRoute(ListTransPackge tListTransPackge, float x,float y){
+			System.out.println("执行了这个方法saveListPackageRoute"+tListTransPackge.toString()+"/"+x+"/"+y);
+			List<TransPackage> lTransPackages = tListTransPackge.getTransPackageList();
+			Date date = getCurrentDate();
+			try {
+				for(TransPackage transPackage: lTransPackages) {
+					PackageRoute packageRoute = new PackageRoute();
+					packageRoute.setPkg(transPackage);
+					packageRoute.setTm(date);
+					packageRoute.setX(x);
+					packageRoute.setY(y);
+					packageRouteDao.save(packageRoute);
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+			
+			return Response.ok("修改成功").header("EntityClass", "ListPackageRoute").build();
+		}
+		
+		//lyy 新增
+		public Response getTransPackageContent(String pkgID,String expressID) {
+			TransPackageContent transPackageContent = null;
+			try {
+				transPackageContent = transPackageContentDao.get(expressID,pkgID);
+			} catch (Exception e) {
+				// TODO: handle exception
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+			return Response.ok(transPackageContent).header("EntityClass", "TransPackageContent").build();
+		}
+		
+		//lyy 新增
+		public Response changeExpressStatusInPackage(String pkgID,String expressID,int status) {
+			TransPackageContent transPackageContent = null;
+			try {
+				transPackageContent = transPackageContentDao.get(expressID,pkgID);
+				transPackageContent.setStatus(status);
+				transPackageContentDao.save(transPackageContent);
+			} catch (Exception e) {
+				// TODO: handle exception
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+			return Response.ok(transPackageContent).header("EntityClass", "TransPackageContent").build();
+		}
+		
+		//lyy 新增
+		public Response changeExpressStatusInTransPackage(String pkgID,int status) {
+			try {
+				List<ExpressSheet> lExpressSheets = expressSheetDao.getListInPackage(pkgID);
+				for(ExpressSheet es:lExpressSheets) {
+					TransPackageContent transPackageContent = transPackageContentDao.get(es.getID(), pkgID);
+					transPackageContent.setStatus(status);
+					transPackageContentDao.save(transPackageContent);
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				return Response.serverError().entity(e.getMessage()).build(); 
+			}
+			return Response.ok("改变状态成功！").header("EntityClass", "ChangeExpressStatus").build();
+		}
+
+		//lyy 新增
+		public List<TransHistoryDetail> getTransHistoryDetailList(String expressID){
+			ExpressSheet es = expressSheetDao.get(expressID);
+			List<TransPackage> transPackages = transPackageDao.findbyExpressSheetIdList(expressID);
+			List<TransHistoryDetail> transHistoryDetails = new ArrayList<TransHistoryDetail>();
+			for(TransPackage transPackage: transPackages) {
+				List<TransHistory> transHistories = transHistoryDao.getPkgListOrderByAccTime(transPackage);
+				for(TransHistory transHistory:transHistories) {
+					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+					transHistoryDetail.setExpressSheet(es);
+					UserInfo uidfrom = userInfoDao.get(transHistory.getUIDFrom());
+					UserInfo uidto = userInfoDao.get(transHistory.getUIDTo());
+					TransNode fromNode = transNodeDao.get(uidfrom.getDptID());
+					TransNode toNode = transNodeDao.get(uidto.getDptID());
+					transHistoryDetail.setFromNode(fromNode);
+					transHistoryDetail.setToNode(toNode);
+					transHistoryDetail.setTransHistory(transHistory);
+					transHistoryDetail.setUIDFrom(uidfrom);
+					transHistoryDetail.setUIDTo(uidto);
+					transHistoryDetails.add(transHistoryDetail);
+				}
+			}
+			return transHistoryDetails;
+			
 		}
 	
 }
