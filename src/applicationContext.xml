@@ -91,7 +91,6 @@
 				<property name="regionDao" ref="regionDao"></property>
 				<property name="customerInfoDao" ref="customerInfoDao"></property>
 				<property name="userInfoDao" ref="userInfoDao"></property>
-				
 				<property name="usersPackageDao" ref="usersPackageDao"></property>
 			</bean>
 			<bean class="ts.serviceImpl.DomainService">
@@ -102,7 +101,6 @@
 				<property name="packageRouteDao" ref="packageRouteDao"></property>
 				<property name="transPackageContentDao" ref="transPackageContentDao"></property>
 				<property name="userInfoDao" ref="userInfoDao"></property>
-				<property name="transNodeDao" ref="transNodeDao"></property>
 			</bean>
 		</jaxrs:serviceBeans>
 
