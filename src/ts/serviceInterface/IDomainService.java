@@ -105,8 +105,8 @@ public interface IDomainService {
     @Path("/getAllTransPackage") 
 	public List<TransPackage> getAllTransPackage();
     
-    @GET
-    @Produces({MediaType.APPLICATION_JSON })
+    @GET	
+    @Produces({MediaType.APPLICATION_JSON})
     @Path("/getTransPackageList/{Property}/{Restrictions}/{Value}") 
 	public List<TransPackage> getTransPackageList(@PathParam("Property")String property, @PathParam("Restrictions")String restrictions, @PathParam("Value")String value);
 
@@ -140,8 +140,13 @@ public interface IDomainService {
     @GET
     @Produces({MediaType.APPLICATION_JSON })
     @Path("/findTransPackagebyExpressSheetId/{id}") 
-	public TransPackage findTransPackagebyExpressSheetId(@PathParam("id")String id);
+	public List<TransPackage> findTransPackagebyExpressSheetId(@PathParam("id")String id);
     
+    //ldq 通过包裹id查询包裹历史
+      @GET
+      @Produces({MediaType.APPLICATION_JSON })
+      @Path("/getTransHistory/{id}") 
+  	public List<TransHistory> getTransHistory(@PathParam("id")String id);
     
 //  lyy ： 修改
   //将快件添加到包裹里
@@ -229,6 +234,12 @@ public interface IDomainService {
   @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
   @Path("/getRecentOneTranHistory")
   public Response getRecentOneTranHistory(TransPackage transPackage);
+  
+//tzx 根据网点号查找该网点下所有状态为status的快件
+	@GET
+    @Produces({MediaType.APPLICATION_JSON })
+    @Path("/getExpressListbytransnode/{transnodeid}/{status}") 
+	public List<ExpressSheet> getExpressListbytransnode(@PathParam("transnodeid") String id,@PathParam("status") int status);
   
   //lyy 新增saveOneTransPackge
   @POST

@@ -421,11 +421,16 @@ public class DomainService implements IDomainService {
 	}
 	
 	 //快件历史=======================================================================
-	public TransPackage findTransPackagebyExpressSheetId(String id) {
+	public List<TransPackage> findTransPackagebyExpressSheetId(String id) {
 		return transPackageDao.findbyExpressSheetId(id);
 	}
 	
-	
+	//ldq
+		public List<TransHistory> getTransHistory(String id) {
+			TransPackage transPackage = transPackageDao.get(id);
+			System.out.println(transPackage);
+			return transHistoryDao.getPkgListOrderByAccTime(transPackage);
+		}
 	
 	//lyy 修改
 		public Response MoveExpressFromPackage(String id, String sourcePkgId) {
@@ -724,5 +729,20 @@ public class DomainService implements IDomainService {
 			return transHistoryDetails;
 			
 		}
+		//tzx
+				@Override
+				public List<ExpressSheet> getExpressListbytransnode(String id,int status) {
+					List<ExpressSheet> expressSheets = expressSheetDao.findBy("status", status, "ID", true);
+					System.out.println(id);
+					TransNode transNode = transNodeDao.get(id);
+					String regionCode = transNode.getRegionCode();
+					for (int i = 0; i < expressSheets.size(); i++) {
+						if (!regionCode.equals(expressSheets.get(i).getSender().getRegionCode())) {
+							expressSheets.remove(i);
+							i--;
+						}
+					}
+					return expressSheets;
+				}
 	
 }

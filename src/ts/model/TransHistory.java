@@ -27,7 +27,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 @Entity
 @org.hibernate.annotations.Proxy(lazy = false)
 @Table(name = "TransHistory")
@@ -122,7 +121,6 @@ public class TransHistory implements Serializable {
 	public void setPkg(TransPackage value) {
 		this.pkg = value;
 	}
-
 
 	public TransPackage getPkg() {
 		return pkg;

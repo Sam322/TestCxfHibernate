@@ -102,7 +102,7 @@
 				<property name="packageRouteDao" ref="packageRouteDao"></property>
 				<property name="transPackageContentDao" ref="transPackageContentDao"></property>
 				<property name="userInfoDao" ref="userInfoDao"></property>
-				
+				<property name="transNodeDao" ref="transNodeDao"></property>
 			</bean>
 		</jaxrs:serviceBeans>
 

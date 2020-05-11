@@ -271,6 +271,6 @@ public class ExpressSheet implements Serializable {
 		public static final int STATUS_DELIVERIED = 2;//已交付
 		public static final int STATUS_PAISONG = 3;//正在派送
 		public static final int STATUS_DAIZHUAYUN = 4;//待转运
-		
+		public static final int STATUS_DAIPAISONG = 5;//待派送
 	}
 }

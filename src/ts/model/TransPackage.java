@@ -35,7 +35,6 @@ public class TransPackage implements Serializable {
 	public static final int PKG_ACCED = 3; //转运中心（已扫描）
 	public static final int PKG_ACHIEVED = 4; //以达到achieved
 	public static final int PKG_UNPACKED = 5;  //已拆包
-
 	public TransPackage() {
 	}
 	
