@@ -144,7 +144,7 @@ public interface IDomainService {
     @GET
     @Produces({MediaType.APPLICATION_JSON })
     @Path("/getTransHistory/{id}") 
-	public TransHistory getTransHistory(@PathParam("id")String id);
+	public List<TransHistory> getTransHistory(@PathParam("id")String id);
     
     
 //  lyy £º ÐÞ¸Ä

@@ -34,6 +34,14 @@ public class DomainService implements IDomainService {
 	private UserInfoDao userInfoDao;
 	private TransNodeDao transNodeDao;
 
+	public TransNodeDao getTransNodeDao() {
+		return transNodeDao;
+	}
+
+	public void setTransNodeDao(TransNodeDao transNodeDao) {
+		this.transNodeDao = transNodeDao;
+	}
+
 	public ExpressSheetDao getExpressSheetDao() {
 		return expressSheetDao;
 	}
@@ -397,10 +405,10 @@ public class DomainService implements IDomainService {
 		return transPackageDao.findbyExpressSheetId(id);
 	}
 	//ldq
-	public TransHistory getTransHistory(String id) {
+	public List<TransHistory> getTransHistory(String id) {
 		TransPackage transPackage = transPackageDao.get(id);
 		System.out.println(transPackage);
-		return transHistoryDao.getPkgListOrderByAccTime(transPackage).get(0);
+		return transHistoryDao.getPkgListOrderByAccTime(transPackage);
 	}
 	
 	
@@ -543,6 +551,7 @@ public class DomainService implements IDomainService {
 			return Response.ok(transHistory).header("EntityClass", "TransHistory").build();
 		}
 		
+		//tzx
 		@Override
 		public List<ExpressSheet> getExpressListbytransnode(String id,int status) {
 			List<ExpressSheet> expressSheets = expressSheetDao.findBy("status", status, "ID", true);
