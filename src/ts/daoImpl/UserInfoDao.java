@@ -22,5 +22,14 @@ public class UserInfoDao extends BaseDao<UserInfo, Integer> {
 		return findBy("dptID", nodeID,"URull", false);
 		
 	}
+	//tzx
+	public List<UserInfo> findByName(String name) {
+		return findLike("name", name+"%", "telCode", true);
+	}
+			
+	//tzx
+	public List<UserInfo> findByDptID(String DptID) {
+		return findLike("dptID", DptID, "telCode", true);
+	}
 
 }

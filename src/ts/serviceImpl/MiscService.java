@@ -466,5 +466,40 @@ public class MiscService implements IMiscService {
 			}
 			return Response.ok("ÐÞ¸Ä³É¹¦").header("EntityClass", "ListUsersPackage").build();
 		}
+		
+		//tzx
+		@Override
+		public String getNodeaddress(String code) {
+				
+			TransNode tn = transNodeDao.get(code);
+			String address = regionDao.getRegionNameByID(tn.getRegionCode());
+			address = address + " " + tn.getNodeName();
+			return address;
+		}
+				
+		//tzx
+		@Override
+		public Response deleteUserInfo(int uid) {
+			userInfoDao.removeById(uid);
+			return Response.ok("Deleted").header("EntityClass", "D_UserInfo").build();
+		}
+				
+		//tzx
+		@Override
+		public List<UserInfo> getUserListByName(String name) {
+			return userInfoDao.findByName(name);
+		}
+		
+		//tzx
+		@Override
+		public List<UserInfo> getUserListByTelCode(String TelCode) {
+			return userInfoDao.findByTelCode(TelCode);
+		}
+
+		//tzx
+		@Override
+		public List<UserInfo> getUserListByDptID(String DptID) {
+			return userInfoDao.findByDptID(DptID);
+		}
 
 }
