@@ -20,7 +20,14 @@ public class TransHistoryDetail implements Serializable{
     private  UserInfo UIDTo;
     private TransNode fromNode;
     private TransNode toNode;
+    private int SN;
 
+    public int getSN() {
+		return SN;
+	}
+    public void setSN(int sN) {
+		SN = sN;
+	}
     public void setExpressSheet(ExpressSheet expressSheet) {
         this.expressSheet = expressSheet;
     }

@@ -22,4 +22,5 @@ public class UserInfoDao extends BaseDao<UserInfo, Integer> {
 		return findBy("dptID", nodeID,"URull", false);
 		
 	}
+
 }
