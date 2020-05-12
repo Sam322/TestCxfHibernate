@@ -242,14 +242,18 @@ public class MiscService implements IMiscService {
 
 	}
 
+	//whb
 	@Override
-	public UserInfo doLogin(String telcode, String pwd) {
+	public Response doLogin(String telcode, String pwd) {
 		List<UserInfo> listui = userInfoDao.findByTelCode(telcode);
-		if (listui.get(0).getPWD().equals(pwd))
-			return listui.get(0);
+		if(listui.size()==0)
+			return Response.ok("该用户不存在").header("EntityClass", "N_UserInfo").build();
+		if (listui.get(0).getPWD().equals(MD5.MD5Encode(pwd)))
+			return Response.ok(listui.get(0)).header("EntityClass", "UserInfo").build();
 		else
-			return null;
+			return Response.ok("该用户不存在").header("EntityClass", "N_UserInfo").build();
 	}
+
 
 	@Override
 	public void doLogOut(int uid) {
@@ -289,21 +293,46 @@ public class MiscService implements IMiscService {
 		return userInfoDao.get(uid);
 	}
 
+	//whb
 	@Override
-	public boolean doRegister(String telCode, String pwd, String dptid) {
+	public Response doRegister(String name,String telCode, String pwd, String dptid,Integer urull) {
 		UserInfo userInfo = new UserInfo();
+		userInfo.setName(name);
 		userInfo.setTelCode(telCode);
-		userInfo.setPWD(pwd);
+		userInfo.setPWD(MD5.MD5Encode(pwd));
 		userInfo.setDptID(dptid);
+		userInfo.setURull(urull);
 		userInfo.setStatus(0);
 		List<UserInfo> userList = userInfoDao.findByTelCode(telCode);
 		if (userList.size() != 0) {
-			return false;
+			return Response.ok("该用户已注册").header("EntityClass", "NR_UserInfo").build();
 		}
-		userInfoDao.save(userInfo);
-		return true;
+		try {
+			userInfoDao.save(userInfo);
+			return Response.ok(userInfo).header("EntityClass", "R_UserInfo").build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.serverError().entity(e.getMessage()).build();
+		}
 	}
-	
+	//whb
+			@Override
+			public Response resetPWD(String telcode,String newpwd) {
+				UserInfo userInfo = new UserInfo();
+				List<UserInfo> listui = userInfoDao.findByTelCode(telcode);
+				if(listui.size()==0)
+					return Response.ok("该用户不存在").header("EntityClass", "NP_UserInfo").build();
+				userInfo = listui.get(0);
+				userInfo.setPWD(MD5.MD5Encode(newpwd));
+				try {
+					userInfoDao.save(userInfo);
+					return Response.ok(userInfo).header("EntityClass", "P_UserInfo").build();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return Response.serverError().entity(e.getMessage()).build();
+				}
+			}
+
 	
 	//lyy 修改
 		@Override

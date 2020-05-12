@@ -142,7 +142,7 @@ public interface IMiscService {
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Path("/doLogin/{telcode}/{pwd}") 
-	public UserInfo doLogin(@PathParam("telcode") String telcode, @PathParam("pwd") String pwd);
+	public Response doLogin(@PathParam("telcode") String telcode, @PathParam("pwd") String pwd);
     
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -151,10 +151,15 @@ public interface IMiscService {
     
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    @Path("/doRegister/{telcode}/{pwd}/{dptid}")
-    public boolean doRegister(@PathParam("telcode") String telcode,@PathParam("pwd") String pwd,@PathParam("dptid") String dptid);
+    @Path("/doRegister/{name}/telcode}/{pwd}/{dptid}/{urull}")
+    public Response doRegister(@PathParam("name")String name,@PathParam("telcode") String telCode, @PathParam("pwd")String pwd, @PathParam("dptid") String dptid,@PathParam("urull")Integer urull);
 	public void RefreshSessionList();
 
+	//whb
+	@GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/resetPWD/{telcode}/{newpwd}")
+	public Response resetPWD(@PathParam("telcode")String telcode,@PathParam("newpwd")String newpwd);
 	//lyy ÐÂÔö
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
