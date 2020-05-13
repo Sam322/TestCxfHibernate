@@ -216,4 +216,34 @@ public interface IMiscService {
     @Path("/saveUsersPackageList/{uid}") 
     public Response saveUsersPackageList(ListTransPackge listTransPackge,@PathParam("uid")int uid);
     
+    //tzx @return网点的详细地址
+    @GET
+    @Produces({MediaType.APPLICATION_JSON })
+    @Path("/getNodeaddress/{NodeCode}") 
+	public String getNodeaddress(@PathParam("NodeCode")String code);
+    
+    //tzx 按id删除用户
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/deleteUserInfo/{uid}") 
+	public Response deleteUserInfo(@PathParam("uid")int uid);
+    
+    //tzx 根据员工姓名查找
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/getUserListByName/{name}") 
+	public List<UserInfo> getUserListByName(@PathParam("name")String name);
+    
+    //tzx 根据员工手机号查找
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/getUserListByTelCode/{TelCode}") 
+	public List<UserInfo> getUserListByTelCode(@PathParam("TelCode")String TelCode);
+    
+    //tzx 根据员工网点查找
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Path("/getUserListByDptID/{DptID}") 
+	public List<UserInfo> getUserListByDptID(@PathParam("DptID")String DptID);
+    
 }

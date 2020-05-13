@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
+import ts.daoImpl.CustomerInfoDao;
 import ts.daoImpl.ExpressSheetDao;
 import ts.daoImpl.PackageRouteDao;
 import ts.daoImpl.TransHistoryDao;
@@ -17,6 +18,7 @@ import ts.daoImpl.TransNodeDao;
 import ts.daoImpl.TransPackageContentDao;
 import ts.daoImpl.TransPackageDao;
 import ts.daoImpl.UserInfoDao;
+import ts.model.CustomerInfo;
 import ts.model.ExpressSheet;
 import ts.model.ListTransHistory;
 import ts.model.ListTransPackge;
@@ -38,6 +40,15 @@ public class DomainService implements IDomainService {
 	private PackageRouteDao packageRouteDao;
 	private UserInfoDao userInfoDao;
 	private TransNodeDao transNodeDao;
+	private CustomerInfoDao customerInfoDao;
+
+	public CustomerInfoDao getCustomerInfoDao() {
+		return customerInfoDao;
+	}
+
+	public void setCustomerInfoDao(CustomerInfoDao customerInfoDao) {
+		this.customerInfoDao = customerInfoDao;
+	}
 
 	public TransNodeDao getTransNodeDao() {
 		return transNodeDao;
@@ -707,45 +718,20 @@ public class DomainService implements IDomainService {
 		List<TransPackage> transPackages = transPackageDao.findbyExpressSheetIdList(expressID);
 		List<TransHistoryDetail> transHistoryDetails = new ArrayList<TransHistoryDetail>();
 		int count = 0;
-		if(es.getStatus() == ExpressSheet.STATUS.STATUS_CREATED) {
+		if (es.getStatus() == ExpressSheet.STATUS.STATUS_CREATED) {
 			TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
 			transHistoryDetail.setExpressSheet(es);
 			transHistoryDetail.setSN(count++);
 			transHistoryDetails.add(transHistoryDetail);
-		}else if(es.getStatus() == ExpressSheet.STATUS.STATUS_DAIZHUAYUN){
-			for(int i = 0 ; i<= 1; i++) {
+		} else if (es.getStatus() == ExpressSheet.STATUS.STATUS_DAIZHUAYUN) {
+			for (int i = 0; i <= 1; i++) {
 				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
 				transHistoryDetail.setExpressSheet(es);
 				transHistoryDetail.setSN(count++);
 				transHistoryDetails.add(transHistoryDetail);
 			}
-		}else if(es.getStatus() == ExpressSheet.STATUS.STATUS_TRANSPORT) {
-			for(int i = 0 ; i<= 1; i++) {
-				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-				transHistoryDetail.setExpressSheet(es);
-				transHistoryDetail.setSN(count++);
-				transHistoryDetails.add(transHistoryDetail);
-			}
-			for (TransPackage transPackage : transPackages) {
-				List<TransHistory> transHistories = transHistoryDao.getPkgListOrderByAscTime(transPackage);
-				for (TransHistory transHistory : transHistories) {
-					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-					transHistoryDetail.setExpressSheet(es);
-					UserInfo uidfrom = userInfoDao.get(transHistory.getUIDFrom());
-					UserInfo uidto = userInfoDao.get(transHistory.getUIDTo());
-					TransNode fromNode = transNodeDao.get(uidfrom.getDptID());
-					TransNode toNode = transNodeDao.get(uidto.getDptID());
-					transHistoryDetail.setFromNode(fromNode);
-					transHistoryDetail.setToNode(toNode);
-					transHistoryDetail.setTransHistory(transHistory);
-					transHistoryDetail.setUIDFrom(uidfrom);
-					transHistoryDetail.setUIDTo(uidto);
-					transHistoryDetail.setSN(count++);
-					transHistoryDetails.add(transHistoryDetail);
-				}
-			}
-		}else if(es.getStatus() == ExpressSheet.STATUS.STATUS_PAISONG) {
-			for(int i = 0 ; i<= 1; i++) {
+		} else if (es.getStatus() == ExpressSheet.STATUS.STATUS_TRANSPORT) {
+			for (int i = 0; i <= 1; i++) {
 				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
 				transHistoryDetail.setExpressSheet(es);
 				transHistoryDetail.setSN(count++);
@@ -769,13 +755,8 @@ public class DomainService implements IDomainService {
 					transHistoryDetails.add(transHistoryDetail);
 				}
 			}
-			TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-			transHistoryDetail.setUIDFrom(userInfoDao.get(Integer.getInteger(es.getDeliver())));
-			transHistoryDetail.setSN(count++);
-			transHistoryDetails.add(transHistoryDetail);
-			
-		}else if(es.getStatus() == ExpressSheet.STATUS.STATUS_DELIVERIED) {
-			for(int i = 0 ; i<= 1; i++) {
+		} else if (es.getStatus() == ExpressSheet.STATUS.STATUS_PAISONG) {
+			for (int i = 0; i <= 1; i++) {
 				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
 				transHistoryDetail.setExpressSheet(es);
 				transHistoryDetail.setSN(count++);
@@ -803,13 +784,43 @@ public class DomainService implements IDomainService {
 			transHistoryDetail.setUIDFrom(userInfoDao.get(Integer.getInteger(es.getDeliver())));
 			transHistoryDetail.setSN(count++);
 			transHistoryDetails.add(transHistoryDetail);
-			
+
+		} else if (es.getStatus() == ExpressSheet.STATUS.STATUS_DELIVERIED) {
+			for (int i = 0; i <= 1; i++) {
+				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+				transHistoryDetail.setExpressSheet(es);
+				transHistoryDetail.setSN(count++);
+				transHistoryDetails.add(transHistoryDetail);
+			}
+			for (TransPackage transPackage : transPackages) {
+				List<TransHistory> transHistories = transHistoryDao.getPkgListOrderByAscTime(transPackage);
+				for (TransHistory transHistory : transHistories) {
+					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+					transHistoryDetail.setExpressSheet(es);
+					UserInfo uidfrom = userInfoDao.get(transHistory.getUIDFrom());
+					UserInfo uidto = userInfoDao.get(transHistory.getUIDTo());
+					TransNode fromNode = transNodeDao.get(uidfrom.getDptID());
+					TransNode toNode = transNodeDao.get(uidto.getDptID());
+					transHistoryDetail.setFromNode(fromNode);
+					transHistoryDetail.setToNode(toNode);
+					transHistoryDetail.setTransHistory(transHistory);
+					transHistoryDetail.setUIDFrom(uidfrom);
+					transHistoryDetail.setUIDTo(uidto);
+					transHistoryDetail.setSN(count++);
+					transHistoryDetails.add(transHistoryDetail);
+				}
+			}
+			TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+			transHistoryDetail.setUIDFrom(userInfoDao.get(Integer.getInteger(es.getDeliver())));
+			transHistoryDetail.setSN(count++);
+			transHistoryDetails.add(transHistoryDetail);
+
 			TransHistoryDetail transHistoryDetail1 = new TransHistoryDetail();
 			transHistoryDetail1.setUIDFrom(userInfoDao.get(Integer.getInteger(es.getDeliver())));
 			transHistoryDetail.setSN(count++);
 			transHistoryDetails.add(transHistoryDetail1);
 		}
-		
+
 		return transHistoryDetails;
 
 	}
@@ -829,12 +840,12 @@ public class DomainService implements IDomainService {
 		}
 		return expressSheets;
 	}
-	
-	//ldq查询包裹的route
+
+	// ldq查询包裹的route
 	@Override
-	public List<PackageRoute> getPackageRoute(String packageID){
+	public List<PackageRoute> getPackageRoute(String packageID) {
 		List<PackageRoute> packageRoutes = packageRouteDao.getAll();
-		List<PackageRoute> Routes =  new ArrayList<>();
+		List<PackageRoute> Routes = new ArrayList<>();
 		System.out.println(packageID);
 		for (int i = 0; i < packageRoutes.size(); i++) {
 			System.out.println(packageRoutes.get(i).getPkg().getID());
@@ -858,5 +869,24 @@ public class DomainService implements IDomainService {
 		return packageRoutes;
 	}
 	
+
+	// ldq 通过顾客姓名、联系方式模糊查询运单
+	@Override
+	public List<ExpressSheet> getExpressListbyCustomerinfo(String info) {
+		List<ExpressSheet> expressSheets = new ArrayList<ExpressSheet>();
+		List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
+		System.out.println(info);
+		if (info.matches("[0-9]+")) {// info为数字
+			customerInfos = customerInfoDao.findLike("telCode", info+ "%", "ID", true);
+		} else {
+			customerInfos = customerInfoDao.findLike("name", info+ "%", "ID", true);
+		}
+		System.out.println(customerInfos);//运行到这里
+		for (CustomerInfo customerInfo : customerInfos) {
+			expressSheets.addAll(expressSheetDao.findBy("recever", customerInfo, "ID", true));
+			expressSheets.addAll(expressSheetDao.findBy("sender", customerInfo, "ID", true));
+		}
+		return expressSheets;
+	}
 
 }

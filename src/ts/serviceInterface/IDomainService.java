@@ -305,6 +305,13 @@ public interface IDomainService {
   @Path("/getPackageRouteListByExpressId/{expressID}")
   public List<PackageRoute> getPackageRouteListByExpressId(@PathParam("expressID")String expressID);
   
+//ldq 新增通过顾客信息模糊查询运单
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON )
+  @Path("/getExpressListbyCustomerinfo/{info}")
+  public List<ExpressSheet> getExpressListbyCustomerinfo(@PathParam("info")String info);
+  
   
   
   
