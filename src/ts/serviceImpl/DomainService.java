@@ -826,17 +826,24 @@ public class DomainService implements IDomainService {
 
 	}
 
-	// tzx
+	//tzx
 	@Override
-	public List<ExpressSheet> getExpressListbytransnode(String id, int status) {
+	public List<ExpressSheet> getExpressListbytransnode(String id,int status) {
 		List<ExpressSheet> expressSheets = expressSheetDao.findBy("status", status, "ID", true);
 		System.out.println(id);
 		TransNode transNode = transNodeDao.get(id);
 		String regionCode = transNode.getRegionCode();
 		for (int i = 0; i < expressSheets.size(); i++) {
-			if (!regionCode.equals(expressSheets.get(i).getSender().getRegionCode())) {
-				expressSheets.remove(i);
-				i--;
+			if (status == 0) {
+				if (!regionCode.equals(expressSheets.get(i).getSender().getRegionCode())) {
+					expressSheets.remove(i);
+					i--;
+				}
+			}else if (status == 5) {
+				if (!regionCode.equals(expressSheets.get(i).getRecever().getRegionCode())) {
+					expressSheets.remove(i);
+					i--;
+				}
 			}
 		}
 		return expressSheets;
