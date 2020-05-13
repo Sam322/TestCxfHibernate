@@ -145,15 +145,18 @@ public interface IMiscService {
 	public Response doLogin(@PathParam("telcode") String telcode, @PathParam("pwd") String pwd);
     
     @GET
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Path("/doLogOut/{uid}") 
 	public void doLogOut(@PathParam("uid") int uid);
     
     @GET
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    @Path("/doRegister/{name}/telcode}/{pwd}/{dptid}/{urull}")
+    @Path("/doRegister/{name}/{telcode}/{pwd}/{dptid}/{urull}")
     public Response doRegister(@PathParam("name")String name,@PathParam("telcode") String telCode, @PathParam("pwd")String pwd, @PathParam("dptid") String dptid,@PathParam("urull")Integer urull);
-	public void RefreshSessionList();
+	
+    public void RefreshSessionList();
 
 	//whb
 	@GET

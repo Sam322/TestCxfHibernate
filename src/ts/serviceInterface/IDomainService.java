@@ -298,6 +298,13 @@ public interface IDomainService {
   @Path("/getPackageRoute/{packageID}")
   public List<PackageRoute> getPackageRoute(@PathParam("packageID")String packageID);
   
+  //lyy ÐÂÔö
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON )
+  @Path("/getPackageRouteListByExpressId/{expressID}")
+  public List<PackageRoute> getPackageRouteListByExpressId(@PathParam("expressID")String expressID);
+  
   
   
   

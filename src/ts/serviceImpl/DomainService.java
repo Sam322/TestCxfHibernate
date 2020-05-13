@@ -844,5 +844,19 @@ public class DomainService implements IDomainService {
 		}
 		return Routes;
 	}
+	
+	//lyy ÐÂÔö
+	@Override
+	public List<PackageRoute> getPackageRouteListByExpressId(String expressID){
+		List<PackageRoute> packageRoutes= new ArrayList<PackageRoute>();
+		List<TransPackage> transPackages = transPackageDao.findbyExpressSheetIdList(expressID);
+		for(TransPackage transPackage:transPackages) {
+			List<PackageRoute> pRoutes = packageRouteDao.getPackageRouteListByPkg(transPackage);
+			packageRoutes.addAll(pRoutes);
+		}
+		
+		return packageRoutes;
+	}
+	
 
 }
