@@ -271,7 +271,7 @@ public class MiscService implements IMiscService {
 	@Override
 	public Response saveUserInfo(UserInfo obj) {
 		System.out.println("调用了saveUserInfo方法");
-
+		obj.setPWD(MD5.MD5Encode(obj.getPWD()));
 		try {
 			userInfoDao.save(obj);
 			return Response.ok(obj).header("EntityClass", "R_UserInfo").build();
