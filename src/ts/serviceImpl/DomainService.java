@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import ts.daoImpl.CustomerInfoDao;
@@ -885,6 +886,16 @@ public class DomainService implements IDomainService {
 		for (CustomerInfo customerInfo : customerInfos) {
 			expressSheets.addAll(expressSheetDao.findBy("recever", customerInfo, "ID", true));
 			expressSheets.addAll(expressSheetDao.findBy("sender", customerInfo, "ID", true));
+		}
+		return expressSheets;
+	}
+	// ldq 新增通过包裹id查询其中的快件
+	@Override
+	public List<ExpressSheet> getExpressListbytranspackageId(String transpackageId) {
+		List<TransPackageContent> transPackageContents =  transPackageContentDao.findBy("pkg", transPackageDao.get(transpackageId), "SN", true);
+		List<ExpressSheet> expressSheets = new ArrayList<ExpressSheet>();
+		for (TransPackageContent transPackageContent : transPackageContents) {
+			expressSheets.add(transPackageContent.getExpress());
 		}
 		return expressSheets;
 	}

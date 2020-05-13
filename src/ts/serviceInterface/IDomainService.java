@@ -312,6 +312,13 @@ public interface IDomainService {
   @Path("/getExpressListbyCustomerinfo/{info}")
   public List<ExpressSheet> getExpressListbyCustomerinfo(@PathParam("info")String info);
   
+//ldq 新增通过包裹id查询其中的快件
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON )
+  @Path("/getExpressListbytranspackageId/{transpackageId}")
+  public List<ExpressSheet> getExpressListbytranspackageId(@PathParam("transpackageId")String transpackageId);
+  
   
   
   
