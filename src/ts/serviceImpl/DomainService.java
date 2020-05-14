@@ -834,12 +834,12 @@ public class DomainService implements IDomainService {
 		TransNode transNode = transNodeDao.get(id);
 		String regionCode = transNode.getRegionCode();
 		for (int i = 0; i < expressSheets.size(); i++) {
-			if (status == 0) {
+			if (status == ExpressSheet.STATUS.STATUS_CREATED) {
 				if (!regionCode.equals(expressSheets.get(i).getSender().getRegionCode())) {
 					expressSheets.remove(i);
 					i--;
 				}
-			}else if (status == 5) {
+			}else if (status == ExpressSheet.STATUS.STATUS_DAIPAISONG) {
 				if (!regionCode.equals(expressSheets.get(i).getRecever().getRegionCode())) {
 					expressSheets.remove(i);
 					i--;
