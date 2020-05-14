@@ -907,4 +907,41 @@ public class DomainService implements IDomainService {
 		return expressSheets;
 	}
 
+	//tzx
+	@Override
+	public List<TransPackage> getTransPackageListByStatus(String transnode, int status) {
+		List<TransPackage> list  = transPackageDao.findBy("sourceNode", transnode, "ID", true);
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).getStatus() != status) {
+				list.remove(i);
+				i--;
+			}
+		}
+		return list;
+	}
+	//tzx
+	@Override
+	public List<TransPackage> getTransPackageListBytransnode(String transnode) {
+		List<TransPackage> list1 = new ArrayList<TransPackage>();
+		List<TransPackage> list2 = new ArrayList<TransPackage>();
+		list1 = transPackageDao.findBy("sourceNode", transnode, "ID", true);
+		list2 = transPackageDao.findBy("targetNode", transnode, "ID", true);
+		list1.addAll(list2);
+		return list1;
+	}
+
+	//tzx
+	@Override
+	public List<TransPackage> getTransPackageListBytargetNode(String transnode, String targetnode) {
+		List<TransPackage> list  = transPackageDao.findBy("sourceNode", transnode, "ID", true);
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println(list.get(i));
+			if (!targetnode.equals(list.get(i).getTargetNode())) {
+				list.remove(i);
+				i--;
+			}
+		}
+		return list;
+	}
+
 }

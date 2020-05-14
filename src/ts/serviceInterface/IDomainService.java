@@ -319,7 +319,23 @@ public interface IDomainService {
   @Path("/getExpressListbytranspackageId/{transpackageId}")
   public List<ExpressSheet> getExpressListbytranspackageId(@PathParam("transpackageId")String transpackageId);
   
+  //tzx 根据网点号和包裹状态查询包裹
+  @GET	
+  @Produces({MediaType.APPLICATION_JSON})
+  @Path("/getTransPackageListByStatus/{transnode}/{status}") 
+  public List<TransPackage> getTransPackageListByStatus(@PathParam("transnode")String transnode, @PathParam("status")int status);
   
+  //tzx 根据网点号获取包裹
+  @GET	
+  @Produces({MediaType.APPLICATION_JSON})
+  @Path("/getTransPackageListBytransnode/{transnode}") 
+  public List<TransPackage> getTransPackageListBytransnode(@PathParam("transnode")String transnode);
+  
+//tzx 根据网点号和目的网点查询包裹
+  @GET	
+  @Produces({MediaType.APPLICATION_JSON})
+  @Path("/getTransPackageListBytargetNode/{transnode}/{targetnode}") 
+  public List<TransPackage> getTransPackageListBytargetNode(@PathParam("transnode")String transnode,@PathParam("targetnode")String targetnode);
   
   
   
