@@ -303,7 +303,7 @@ public class MiscService implements IMiscService {
 		userInfo.setPWD(MD5.MD5Encode(pwd));
 		userInfo.setDptID(dptid);
 		userInfo.setURull(urull);
-		userInfo.setStatus(0);
+		userInfo.setStatus(1);
 		List<UserInfo> userList = userInfoDao.findByTelCode(telCode);
 		if (userList.size() != 0) {
 			return Response.ok("该用户已注册").header("EntityClass", "NR_UserInfo").build();
