@@ -344,7 +344,12 @@ public interface IDomainService {
   @Path("/isarrived/{expressid}/{transnode}")
   public Response isarrived(@PathParam("expressid")String expressid,@PathParam("transnode")String transnode);
   
-  
+  //tzx 根据员工id查询该员工正在派送的快件
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/getPaisongExpresssheet/{uid}")
+  public List<ExpressSheet> getPaisongExpresssheet(@PathParam("uid")String uid);
   
   
   

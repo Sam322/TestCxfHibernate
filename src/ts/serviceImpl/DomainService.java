@@ -959,4 +959,17 @@ public class DomainService implements IDomainService {
 		}
 	}
 
+	//tzx
+	@Override
+	public List<ExpressSheet> getPaisongExpresssheet(String uid) {
+		List<ExpressSheet> list = expressSheetDao.findBy("deliver", uid, "id", true);
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).getStatus() != ExpressSheet.STATUS.STATUS_PAISONG) {
+				list.remove(i);
+				i--;
+			}
+		}
+		return list;
+	}
+
 }
