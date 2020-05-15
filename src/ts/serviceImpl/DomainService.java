@@ -204,32 +204,32 @@ public class DomainService implements IDomainService {
 		} catch (Exception e1) {
 		}
 
-		if (es != null) {
+		if (es == null) {
 //			if(es.getStatus() != 0)
 //				return Response.ok(es).header("EntityClass", "L_ExpressSheet").build(); //已经存在,且不能更改
 //			else
-			return Response.ok("快件运单信息已经存在!\n无法创建!").header("EntityClass", "E_ExpressSheet").build(); // 已经存在
+			return Response.ok("运单未创建，请先创建运单").header("EntityClass", "E_ExpressSheet").build(); // 已经存在
 		}
 		try {
 			String pkgId = userInfoDao.get(uid).getReceivePackageID();
-			ExpressSheet nes = new ExpressSheet();
-			nes.setID(id);
-			nes.setType(0);
-			nes.setAccepter(String.valueOf(uid));
-			nes.setAccepteTime(getCurrentDate());
-			nes.setStatus(ExpressSheet.STATUS.STATUS_CREATED);
+			es.setID(id);
+			es.setType(1);
+			es.setAccepter(String.valueOf(uid));
+			es.setAccepteTime(getCurrentDate());
+			es.setStatus(ExpressSheet.STATUS.STATUS_TRANSPORT);
 //			TransPackageContent pkg_add = new TransPackageContent();
 //			pkg_add.setPkg(transPackageDao.get(pkgId));
-//			pkg_add.setExpress(nes);
+//			pkg_add.setExpress(es);
 //			nes.getTransPackageContent().add(pkg_add);
-			expressSheetDao.save(nes);
-			// 放到收件包裹中
-			MoveExpressIntoPackage(nes.getID(), pkgId);
-			return Response.ok(nes).header("EntityClass", "ExpressSheet").build();
+			expressSheetDao.save(es);
+//			// 放到收件包裹中
+			MoveExpressIntoPackage(es.getID(), pkgId);
+			return Response.ok(es).header("EntityClass", "ExpressSheet").build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.getMessage()).build();
 		}
 	}
+
 
 	/**
 	 * ldq 编辑运单
