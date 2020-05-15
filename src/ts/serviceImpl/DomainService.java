@@ -715,9 +715,16 @@ public class DomainService implements IDomainService {
 
 	// lyy ÐÂÔö
 	public List<TransHistoryDetail> getTransHistoryDetailList(String expressID) {
-		ExpressSheet es = expressSheetDao.get(expressID);
-		List<TransPackage> transPackages = transPackageDao.findbyExpressSheetIdList(expressID);
 		List<TransHistoryDetail> transHistoryDetails = new ArrayList<TransHistoryDetail>();
+		ExpressSheet es = null;
+		try {
+			es=expressSheetDao.get(expressID);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		if(es==null) return transHistoryDetails;
+		List<TransPackage> transPackages = transPackageDao.findbyExpressSheetIdList(expressID);
+		
 		int count = 0;
 		if (es.getStatus() == ExpressSheet.STATUS.STATUS_CREATED) {
 			TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
