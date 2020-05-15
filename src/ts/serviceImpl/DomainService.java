@@ -944,4 +944,19 @@ public class DomainService implements IDomainService {
 		return list;
 	}
 
+	//tzx
+	@Override
+	public Response isarrived(String expressid, String transnode) {
+		ExpressSheet expressSheet = expressSheetDao.get(expressid);
+		TransNode node = transNodeDao.get(transnode);
+		System.out.println(expressSheet.getRecever().getRegionCode());
+		System.out.println(node.getRegionCode());
+		if (expressSheet.getRecever().getRegionCode().equals(node.getRegionCode())) {
+			System.out.println(123);
+			return Response.ok(true).header("EntityClass", "ExpressSheet").build();
+		}else {
+			return Response.ok(false).header("EntityClass", "N_ExpressSheet").build();
+		}
+	}
+
 }
