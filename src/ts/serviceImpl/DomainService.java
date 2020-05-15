@@ -960,9 +960,9 @@ public class DomainService implements IDomainService {
 		System.out.println(node.getRegionCode());
 		if (expressSheet.getRecever().getRegionCode().equals(node.getRegionCode())) {
 			System.out.println(123);
-			return Response.ok(true).header("EntityClass", "ExpressSheet").build();
+			return Response.ok(true).header("EntityClass", "isArrived").build();
 		}else {
-			return Response.ok(false).header("EntityClass", "N_ExpressSheet").build();
+			return Response.ok(false).header("EntityClass", "isArrived").build();
 		}
 	}
 
@@ -978,5 +978,29 @@ public class DomainService implements IDomainService {
 		}
 		return list;
 	}
-
+	
+	//lyy changeExpressStatus
+	public Response changeExpressStatus(String id,int status) {
+		ExpressSheet expressSheet = expressSheetDao.get(id);
+		if(expressSheet != null) {
+			if(status == ExpressSheet.STATUS.STATUS_DELIVERIED) {
+				expressSheet.setDeliveTime(getCurrentDate());
+			}
+			expressSheet.setStatus(status);
+			expressSheetDao.save(expressSheet);
+		}
+		return Response.ok(expressSheet).header("EntityClass", "ExpressSheet").build();
+	}
+	//lyy 更新已存在的快件
+	 public Response saveOneExpressSheet(ExpressSheet expressSheet) {
+		
+		 System.out.println("执行了这个方法saveOneExpressSheet");
+		 try {
+			expressSheetDao.save(expressSheet);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return Response.serverError().entity(e.getMessage()).build();
+		}
+		return Response.ok("快件改变状态成功！").header("EntityClass", "ChangeExpressStatus").build();
+      }
 }

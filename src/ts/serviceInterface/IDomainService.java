@@ -351,6 +351,20 @@ public interface IDomainService {
   @Path("/getPaisongExpresssheet/{uid}")
   public List<ExpressSheet> getPaisongExpresssheet(@PathParam("uid")String uid);
   
+  //lyy 
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/changeExpressStatus/{id}/{status}")
+  public Response changeExpressStatus(@PathParam("id")String id,@PathParam("status")int status);
+  
+  
+  //lyy
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/saveOneExpressSheet")
+  public Response saveOneExpressSheet(ExpressSheet expressSheet);
   
   
   
