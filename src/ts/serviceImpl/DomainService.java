@@ -715,6 +715,7 @@ public class DomainService implements IDomainService {
 
 	// lyy 新增
 	public List<TransHistoryDetail> getTransHistoryDetailList(String expressID) {
+		System.out.println("执行了这个方法：getTransHistoryDetailList");
 		List<TransHistoryDetail> transHistoryDetails = new ArrayList<TransHistoryDetail>();
 		ExpressSheet es = null;
 		try {
@@ -763,7 +764,7 @@ public class DomainService implements IDomainService {
 					transHistoryDetails.add(transHistoryDetail);
 				}
 			}
-		} else if (es.getStatus() == ExpressSheet.STATUS.STATUS_PAISONG) {
+		}else if (es.getStatus() == ExpressSheet.STATUS.STATUS_DAIPAISONG) {
 			for (int i = 0; i <= 1; i++) {
 				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
 				transHistoryDetail.setExpressSheet(es);
@@ -789,11 +790,11 @@ public class DomainService implements IDomainService {
 				}
 			}
 			TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-			transHistoryDetail.setUIDFrom(userInfoDao.get(Integer.getInteger(es.getDeliver())));
+			transHistoryDetail.setExpressSheet(es);
 			transHistoryDetail.setSN(count++);
 			transHistoryDetails.add(transHistoryDetail);
-
-		} else if (es.getStatus() == ExpressSheet.STATUS.STATUS_DELIVERIED) {
+			
+		}else if(es.getStatus() == ExpressSheet.STATUS.STATUS_PAISONG) {
 			for (int i = 0; i <= 1; i++) {
 				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
 				transHistoryDetail.setExpressSheet(es);
@@ -817,18 +818,51 @@ public class DomainService implements IDomainService {
 					transHistoryDetail.setSN(count++);
 					transHistoryDetails.add(transHistoryDetail);
 				}
+				
 			}
-			TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-			transHistoryDetail.setUIDFrom(userInfoDao.get(Integer.getInteger(es.getDeliver())));
-			transHistoryDetail.setSN(count++);
-			transHistoryDetails.add(transHistoryDetail);
-
-			TransHistoryDetail transHistoryDetail1 = new TransHistoryDetail();
-			transHistoryDetail1.setUIDFrom(userInfoDao.get(Integer.getInteger(es.getDeliver())));
-			transHistoryDetail.setSN(count++);
-			transHistoryDetails.add(transHistoryDetail1);
+			for(int i = 0; i<= 1;i++) {
+				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+				transHistoryDetail.setExpressSheet(es);
+				UserInfo uidfrom = userInfoDao.get(Integer.valueOf(es.getDeliver()));
+				transHistoryDetail.setUIDFrom(uidfrom);
+				transHistoryDetail.setSN(count++);
+				transHistoryDetails.add(transHistoryDetail);
+			}
+		}else if(es.getStatus() == ExpressSheet.STATUS.STATUS_DELIVERIED) {
+			for (int i = 0; i <= 1; i++) {
+				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+				transHistoryDetail.setExpressSheet(es);
+				transHistoryDetail.setSN(count++);
+				transHistoryDetails.add(transHistoryDetail);
+			}
+			for (TransPackage transPackage : transPackages) {
+				List<TransHistory> transHistories = transHistoryDao.getPkgListOrderByAscTime(transPackage);
+				for (TransHistory transHistory : transHistories) {
+					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+					transHistoryDetail.setExpressSheet(es);
+					UserInfo uidfrom = userInfoDao.get(transHistory.getUIDFrom());
+					UserInfo uidto = userInfoDao.get(transHistory.getUIDTo());
+					TransNode fromNode = transNodeDao.get(uidfrom.getDptID());
+					TransNode toNode = transNodeDao.get(uidto.getDptID());
+					transHistoryDetail.setFromNode(fromNode);
+					transHistoryDetail.setToNode(toNode);
+					transHistoryDetail.setTransHistory(transHistory);
+					transHistoryDetail.setUIDFrom(uidfrom);
+					transHistoryDetail.setUIDTo(uidto);
+					transHistoryDetail.setSN(count++);
+					transHistoryDetails.add(transHistoryDetail);
+				}
+				
+			}
+			for(int i = 0; i<= 2;i++) {
+				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+				transHistoryDetail.setExpressSheet(es);
+				UserInfo uidfrom = userInfoDao.get(Integer.valueOf(es.getDeliver()));
+				transHistoryDetail.setUIDFrom(uidfrom);
+				transHistoryDetail.setSN(count++);
+				transHistoryDetails.add(transHistoryDetail);
+			}
 		}
-
 		return transHistoryDetails;
 
 	}
