@@ -211,7 +211,7 @@ public class DomainService implements IDomainService {
 			return Response.ok("运单未创建，请先创建运单").header("EntityClass", "E_ExpressSheet").build(); // 已经存在
 		}
 		try {
-			String pkgId = userInfoDao.get(uid).getReceivePackageID();
+//			String pkgId = userInfoDao.get(uid).getReceivePackageID();
 			es.setID(id);
 			es.setType(1);
 			es.setAccepter(String.valueOf(uid));
@@ -223,7 +223,7 @@ public class DomainService implements IDomainService {
 //			nes.getTransPackageContent().add(pkg_add);
 			expressSheetDao.save(es);
 //			// 放到收件包裹中
-			MoveExpressIntoPackage(es.getID(), pkgId);
+//			MoveExpressIntoPackage(es.getID(), pkgId);
 			return Response.ok(es).header("EntityClass", "ExpressSheet").build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.getMessage()).build();
