@@ -951,11 +951,16 @@ public class DomainService implements IDomainService {
 	//tzx
 	@Override
 	public List<TransPackage> getTransPackageListByStatus(String transnode, int status) {
-		List<TransPackage> list  = transPackageDao.findBy("sourceNode", transnode, "ID", true);
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).getStatus() != status) {
-				list.remove(i);
-				i--;
+		List<TransPackage> list = new ArrayList<TransPackage>();
+		if (transnode == null) {
+			list = transPackageDao.findBy("status", status, "ID", true);
+		}else {
+			list  = transPackageDao.findBy("sourceNode", transnode, "ID", true);
+			for (int i = 0; i < list.size(); i++) {
+				if (list.get(i).getStatus() != status) {
+					list.remove(i);
+					i--;
+				}
 			}
 		}
 		return list;
