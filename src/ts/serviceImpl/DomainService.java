@@ -872,18 +872,20 @@ public class DomainService implements IDomainService {
 		public List<ExpressSheet> getExpressListbytransnode(String id,int status) {
 			List<ExpressSheet> expressSheets = expressSheetDao.findBy("status", status, "ID", true);
 			System.out.println(id);
-			TransNode transNode = transNodeDao.get(id);
-			String regionCode = transNode.getRegionCode();
-			for (int i = 0; i < expressSheets.size(); i++) {
-				if (status == ExpressSheet.STATUS.STATUS_CREATED) {
-					if (!regionCode.equals(expressSheets.get(i).getSender().getRegionCode())) {
-						expressSheets.remove(i);
-						i--;
-					}
-				}else if (status == ExpressSheet.STATUS.STATUS_DAIPAISONG) {
-					if (!regionCode.equals(expressSheets.get(i).getRecever().getRegionCode())) {
-						expressSheets.remove(i);
-						i--;
+			if (id != null) {
+				TransNode transNode = transNodeDao.get(id);
+				String regionCode = transNode.getRegionCode();
+				for (int i = 0; i < expressSheets.size(); i++) {
+					if (status == ExpressSheet.STATUS.STATUS_CREATED) {
+						if (!regionCode.equals(expressSheets.get(i).getSender().getRegionCode())) {
+							expressSheets.remove(i);
+							i--;
+						}
+					}else if (status == ExpressSheet.STATUS.STATUS_DAIPAISONG) {
+						if (!regionCode.equals(expressSheets.get(i).getRecever().getRegionCode())) {
+							expressSheets.remove(i);
+							i--;
+						}
 					}
 				}
 			}
@@ -951,16 +953,11 @@ public class DomainService implements IDomainService {
 	//tzx
 	@Override
 	public List<TransPackage> getTransPackageListByStatus(String transnode, int status) {
-		List<TransPackage> list = new ArrayList<TransPackage>();
-		if (transnode == null) {
-			list = transPackageDao.findBy("status", status, "ID", true);
-		}else {
-			list  = transPackageDao.findBy("sourceNode", transnode, "ID", true);
-			for (int i = 0; i < list.size(); i++) {
-				if (list.get(i).getStatus() != status) {
-					list.remove(i);
-					i--;
-				}
+		List<TransPackage> list  = transPackageDao.findBy("sourceNode", transnode, "ID", true);
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).getStatus() != status) {
+				list.remove(i);
+				i--;
 			}
 		}
 		return list;
