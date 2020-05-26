@@ -872,7 +872,7 @@ public class DomainService implements IDomainService {
 		public List<ExpressSheet> getExpressListbytransnode(String id,int status) {
 			List<ExpressSheet> expressSheets = expressSheetDao.findBy("status", status, "ID", true);
 			System.out.println(id);
-			if (id != null) {
+			if (!id.equals("0")) {
 				TransNode transNode = transNodeDao.get(id);
 				String regionCode = transNode.getRegionCode();
 				for (int i = 0; i < expressSheets.size(); i++) {
@@ -889,6 +889,7 @@ public class DomainService implements IDomainService {
 					}
 				}
 			}
+			
 			return expressSheets;
 		}
 
