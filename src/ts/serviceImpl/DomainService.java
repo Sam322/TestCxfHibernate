@@ -1019,6 +1019,7 @@ public class DomainService implements IDomainService {
 	}
 	
 	//lyy changeExpressStatus
+	@Override
 	public Response changeExpressStatus(String id,int status) {
 		ExpressSheet expressSheet = expressSheetDao.get(id);
 		if(expressSheet != null) {
@@ -1030,7 +1031,9 @@ public class DomainService implements IDomainService {
 		}
 		return Response.ok(expressSheet).header("EntityClass", "ExpressSheet").build();
 	}
+	
 	//lyy 更新已存在的快件
+	@Override
 	 public Response saveOneExpressSheet(ExpressSheet expressSheet) {
 		
 		 System.out.println("执行了这个方法saveOneExpressSheet");
@@ -1042,4 +1045,34 @@ public class DomainService implements IDomainService {
 		}
 		return Response.ok("快件改变状态成功！").header("EntityClass", "ChangeExpressStatus").build();
       }
+	 
+	//lsy 根据packageId修改transpackage状态
+	@Override
+		 public Response changeTransPackageStatustoUnpackaged(String pkgId) {
+			 TransPackage transpackage=transPackageDao.get(pkgId);
+			 try {
+					if (transpackage!=null) {
+							transpackage.setStatus(TransPackage.PKG_UNPACKED);
+							transPackageDao.save(transpackage);
+					}
+				} catch (Exception e) {
+					return Response.serverError().entity(e.getMessage()).build();
+				}
+			 return Response.ok("签收完成").header("EntityClass","ChangeExpressStatustoUnpackaged").build();
+		 }
+	
+		 //lsy 根据expressId修改TransPackageContent里的状态为已移出
+	@Override
+		 public Response changeStatusInTranspackageContentToOut(String expressId,String pkgId) {
+			 TransPackageContent transpackagecontent=transPackageContentDao.get(expressId,pkgId);
+			 System.out.println(pkgId);
+			 System.out.println(expressId);
+			 try {
+				 transpackagecontent.setStatus(TransPackageContent.STATUS.STATUS_OUTOF_PACKAGE);
+				 transPackageContentDao.save(transpackagecontent);
+			 }catch(Exception e) {
+				 return Response.serverError().entity(e.getMessage()).build();
+			 }
+			 return Response.ok("快件已移出包裹").header("EntityClass", "changeStatusInTranspackageContentToOut").build();
+		 }
 }
