@@ -366,7 +366,19 @@ public interface IDomainService {
   @Path("/saveOneExpressSheet")
   public Response saveOneExpressSheet(ExpressSheet expressSheet);
   
+//lsy
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/changeTransPackageStatustoUnpackaged/{pkgId}")
+  public Response changeTransPackageStatustoUnpackaged(@PathParam("pkgId")String pkgId);
   
+  //lsy
+  @GET
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+  @Path("/changeStatusInTranspackageContentToOut/{expressId}/{pkgId}")
+  public Response changeStatusInTranspackageContentToOut(@PathParam("expressId")String expressId,@PathParam("pkgId")String pkgId);
   
   
   

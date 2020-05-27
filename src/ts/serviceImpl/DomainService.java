@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
 
@@ -871,21 +872,24 @@ public class DomainService implements IDomainService {
 		public List<ExpressSheet> getExpressListbytransnode(String id,int status) {
 			List<ExpressSheet> expressSheets = expressSheetDao.findBy("status", status, "ID", true);
 			System.out.println(id);
-			TransNode transNode = transNodeDao.get(id);
-			String regionCode = transNode.getRegionCode();
-			for (int i = 0; i < expressSheets.size(); i++) {
-				if (status == ExpressSheet.STATUS.STATUS_CREATED) {
-					if (!regionCode.equals(expressSheets.get(i).getSender().getRegionCode())) {
-						expressSheets.remove(i);
-						i--;
-					}
-				}else if (status == ExpressSheet.STATUS.STATUS_DAIPAISONG) {
-					if (!regionCode.equals(expressSheets.get(i).getRecever().getRegionCode())) {
-						expressSheets.remove(i);
-						i--;
+			if (!id.equals("0")) {
+				TransNode transNode = transNodeDao.get(id);
+				String regionCode = transNode.getRegionCode();
+				for (int i = 0; i < expressSheets.size(); i++) {
+					if (status == ExpressSheet.STATUS.STATUS_CREATED) {
+						if (!regionCode.equals(expressSheets.get(i).getSender().getRegionCode())) {
+							expressSheets.remove(i);
+							i--;
+						}
+					}else if (status == ExpressSheet.STATUS.STATUS_DAIPAISONG) {
+						if (!regionCode.equals(expressSheets.get(i).getRecever().getRegionCode())) {
+							expressSheets.remove(i);
+							i--;
+						}
 					}
 				}
 			}
+			
 			return expressSheets;
 		}
 
@@ -967,6 +971,7 @@ public class DomainService implements IDomainService {
 		list1 = transPackageDao.findBy("sourceNode", transnode, "ID", true);
 		list2 = transPackageDao.findBy("targetNode", transnode, "ID", true);
 		list1.addAll(list2);
+		list1 = list1.stream().distinct().collect(Collectors.toList());
 		return list1;
 	}
 
@@ -1013,6 +1018,7 @@ public class DomainService implements IDomainService {
 	}
 	
 	//lyy changeExpressStatus
+	@Override
 	public Response changeExpressStatus(String id,int status) {
 		ExpressSheet expressSheet = expressSheetDao.get(id);
 		if(expressSheet != null) {
@@ -1024,7 +1030,9 @@ public class DomainService implements IDomainService {
 		}
 		return Response.ok(expressSheet).header("EntityClass", "ExpressSheet").build();
 	}
+	
 	//lyy 更新已存在的快件
+	@Override
 	 public Response saveOneExpressSheet(ExpressSheet expressSheet) {
 		
 		 System.out.println("执行了这个方法saveOneExpressSheet");
@@ -1036,4 +1044,34 @@ public class DomainService implements IDomainService {
 		}
 		return Response.ok("快件改变状态成功！").header("EntityClass", "ChangeExpressStatus").build();
       }
+	 
+	//lsy 根据packageId修改transpackage状态
+	@Override
+		 public Response changeTransPackageStatustoUnpackaged(String pkgId) {
+			 TransPackage transpackage=transPackageDao.get(pkgId);
+			 try {
+					if (transpackage!=null) {
+							transpackage.setStatus(TransPackage.PKG_UNPACKED);
+							transPackageDao.save(transpackage);
+					}
+				} catch (Exception e) {
+					return Response.serverError().entity(e.getMessage()).build();
+				}
+			 return Response.ok("签收完成").header("EntityClass","ChangeExpressStatustoUnpackaged").build();
+		 }
+	
+		 //lsy 根据expressId修改TransPackageContent里的状态为已移出
+	@Override
+		 public Response changeStatusInTranspackageContentToOut(String expressId,String pkgId) {
+			 TransPackageContent transpackagecontent=transPackageContentDao.get(expressId,pkgId);
+			 System.out.println(pkgId);
+			 System.out.println(expressId);
+			 try {
+				 transpackagecontent.setStatus(TransPackageContent.STATUS.STATUS_OUTOF_PACKAGE);
+				 transPackageContentDao.save(transpackagecontent);
+			 }catch(Exception e) {
+				 return Response.serverError().entity(e.getMessage()).build();
+			 }
+			 return Response.ok("快件已移出包裹").header("EntityClass", "changeStatusInTranspackageContentToOut").build();
+		 }
 }
