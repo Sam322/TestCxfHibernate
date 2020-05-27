@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
@@ -971,6 +972,7 @@ public class DomainService implements IDomainService {
 		list1 = transPackageDao.findBy("sourceNode", transnode, "ID", true);
 		list2 = transPackageDao.findBy("targetNode", transnode, "ID", true);
 		list1.addAll(list2);
+		list1 = list1.stream().distinct().collect(Collectors.toList());
 		return list1;
 	}
 
