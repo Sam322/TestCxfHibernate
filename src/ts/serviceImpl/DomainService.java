@@ -197,8 +197,12 @@ public class DomainService implements IDomainService {
 		return Response.ok(es).header("EntityClass", "ExpressSheet").build();
 	}
 
+	/**
+	 * whb判断运单是否存在 
+	 */
 	@Override
 	public Response newExpressSheet(String id, int uid) {
+		System.out.println("调用了读取运单方法！");
 		ExpressSheet es = null;
 		try {
 			es = expressSheetDao.get(id);
@@ -206,25 +210,12 @@ public class DomainService implements IDomainService {
 		}
 
 		if (es == null) {
-//			if(es.getStatus() != 0)
-//				return Response.ok(es).header("EntityClass", "L_ExpressSheet").build(); //已经存在,且不能更改
-//			else
 			return Response.ok("运单未创建，请先创建运单").header("EntityClass", "E_ExpressSheet").build(); // 已经存在
 		}
 		try {
-//			String pkgId = userInfoDao.get(uid).getReceivePackageID();
-			es.setID(id);
 			es.setType(1);
 			es.setAccepter(String.valueOf(uid));
-			es.setAccepteTime(getCurrentDate());
-			es.setStatus(ExpressSheet.STATUS.STATUS_TRANSPORT);
-//			TransPackageContent pkg_add = new TransPackageContent();
-//			pkg_add.setPkg(transPackageDao.get(pkgId));
-//			pkg_add.setExpress(es);
-//			nes.getTransPackageContent().add(pkg_add);
 			expressSheetDao.save(es);
-//			// 放到收件包裹中
-//			MoveExpressIntoPackage(es.getID(), pkgId);
 			return Response.ok(es).header("EntityClass", "ExpressSheet").build();
 		} catch (Exception e) {
 			return Response.serverError().entity(e.getMessage()).build();
@@ -284,12 +275,19 @@ public class DomainService implements IDomainService {
 		}
 	}
 
+	/**
+	 * whb 完成揽收 
+	 */
 	@Override
 	public Response ReceiveExpressSheetId(String id, int uid) {
+		System.out.println("调用了揽收快件方法！");
 		try {
 			ExpressSheet nes = expressSheetDao.get(id);
 			if (nes.getStatus() != ExpressSheet.STATUS.STATUS_CREATED) {
 				return Response.ok("快件运单状态错误!无法收件!").header("EntityClass", "E_ExpressSheet").build();
+			}
+			if(nes.getWeight()==null || nes.getPackageFee()==null || nes.getTranFee()==null || nes.getInsuFee()==null) {
+				return Response.ok("快件扩展信息未填写完整").header("EntityClass", "NR_ExpressSheet").build();
 			}
 			nes.setAccepter(String.valueOf(uid));
 			nes.setAccepteTime(getCurrentDate());
@@ -1075,4 +1073,24 @@ public class DomainService implements IDomainService {
 			 }
 			 return Response.ok("快件已移出包裹").header("EntityClass", "changeStatusInTranspackageContentToOut").build();
 		 }
+
+	//whb 填写扩展信息
+	@Override
+	public Response addExpressSheetMessage(ExpressSheet obj) {
+		System.out.println("调用了编辑运单方法！");
+		System.out.println(obj);
+		if(obj.getWeight()!=null && obj.getPackageFee()!=null && obj.getTranFee()!=null && obj.getInsuFee()!=null) {
+			try {
+				expressSheetDao.save(obj);
+				return Response.ok(obj).header("EntityClass", "R_ExpressSheet").build();
+			} catch (Exception e) {
+				System.out.println(e);
+				return Response.serverError().entity(e.getMessage()).build();
+			}
+		}else {
+			return Response.ok("快件扩展信息未填写完整").header("EntityClass", "NR_ExpressSheet").build();
+		}
+	}
+	
+	
 }
