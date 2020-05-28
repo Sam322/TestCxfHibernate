@@ -1074,7 +1074,7 @@ public class DomainService implements IDomainService {
 			 return Response.ok("快件已移出包裹").header("EntityClass", "changeStatusInTranspackageContentToOut").build();
 		 }
 
-	//whb 填写扩展信息
+	//whb 填写扩展信息 
 	@Override
 	public Response addExpressSheetMessage(ExpressSheet obj) {
 		System.out.println("调用了编辑运单方法！");

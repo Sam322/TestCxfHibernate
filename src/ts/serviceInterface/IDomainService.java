@@ -380,7 +380,7 @@ public interface IDomainService {
   @Path("/changeStatusInTranspackageContentToOut/{expressId}/{pkgId}")
   public Response changeStatusInTranspackageContentToOut(@PathParam("expressId")String expressId,@PathParam("pkgId")String pkgId);
   
-//whb填写快件扩展信息
+//whb填写快件扩展信息 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
