@@ -713,158 +713,160 @@ public class DomainService implements IDomainService {
 	}
 
 	// lyy 新增
-	public List<TransHistoryDetail> getTransHistoryDetailList(String expressID) {
-		System.out.println("执行了这个方法：getTransHistoryDetailList");
-		List<TransHistoryDetail> transHistoryDetails = new ArrayList<TransHistoryDetail>();
-		ExpressSheet es = null;
-		try {
-			es=expressSheetDao.get(expressID);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		if(es==null) return transHistoryDetails;
-		List<TransPackage> transPackages = transPackageDao.findbyExpressSheetIdList(expressID);
-		
-		int count = 0;
-		if (es.getStatus() == ExpressSheet.STATUS.STATUS_CREATED) {
-			TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-			transHistoryDetail.setExpressSheet(es);
-			transHistoryDetail.setSN(count++);
-			transHistoryDetails.add(transHistoryDetail);
-		} else if (es.getStatus() == ExpressSheet.STATUS.STATUS_DAIZHUAYUN) {
-			for (int i = 0; i <= 1; i++) {
-				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-				transHistoryDetail.setExpressSheet(es);
-				transHistoryDetail.setSN(count++);
-				transHistoryDetails.add(transHistoryDetail);
+		public List<TransHistoryDetail> getTransHistoryDetailList(String expressID) {
+			System.out.println("执行了这个方法：getTransHistoryDetailList");
+			List<TransHistoryDetail> transHistoryDetails = new ArrayList<TransHistoryDetail>();
+			ExpressSheet es = null;
+			try {
+				es=expressSheetDao.get(expressID);
+			} catch (Exception e) {
+				// TODO: handle exception
 			}
-		} else if (es.getStatus() == ExpressSheet.STATUS.STATUS_TRANSPORT) {
-			for (int i = 0; i <= 1; i++) {
-				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-				transHistoryDetail.setExpressSheet(es);
-				transHistoryDetail.setSN(count++);
-				transHistoryDetails.add(transHistoryDetail);
-			}
-			for (TransPackage transPackage : transPackages) {
-				List<TransHistory> transHistories = transHistoryDao.getPkgListOrderByAscTime(transPackage);
-				for (TransHistory transHistory : transHistories) {
-					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-					transHistoryDetail.setExpressSheet(es);
-					UserInfo uidfrom = userInfoDao.get(transHistory.getUIDFrom());
-					UserInfo uidto = userInfoDao.get(transHistory.getUIDTo());
-					TransNode fromNode = transNodeDao.get(uidfrom.getDptID());
-					TransNode toNode = transNodeDao.get(uidto.getDptID());
-					transHistoryDetail.setFromNode(fromNode);
-					transHistoryDetail.setToNode(toNode);
-					transHistoryDetail.setTransHistory(transHistory);
-					transHistoryDetail.setUIDFrom(uidfrom);
-					transHistoryDetail.setUIDTo(uidto);
-					transHistoryDetail.setSN(count++);
-					transHistoryDetails.add(transHistoryDetail);
-				}
-			}
-		}else if (es.getStatus() == ExpressSheet.STATUS.STATUS_DAIPAISONG) {
-			for (int i = 0; i <= 1; i++) {
-				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-				transHistoryDetail.setExpressSheet(es);
-				transHistoryDetail.setSN(count++);
-				transHistoryDetails.add(transHistoryDetail);
-			}
-			for (TransPackage transPackage : transPackages) {
-				List<TransHistory> transHistories = transHistoryDao.getPkgListOrderByAscTime(transPackage);
-				for (TransHistory transHistory : transHistories) {
-					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-					transHistoryDetail.setExpressSheet(es);
-					UserInfo uidfrom = userInfoDao.get(transHistory.getUIDFrom());
-					UserInfo uidto = userInfoDao.get(transHistory.getUIDTo());
-					TransNode fromNode = transNodeDao.get(uidfrom.getDptID());
-					TransNode toNode = transNodeDao.get(uidto.getDptID());
-					transHistoryDetail.setFromNode(fromNode);
-					transHistoryDetail.setToNode(toNode);
-					transHistoryDetail.setTransHistory(transHistory);
-					transHistoryDetail.setUIDFrom(uidfrom);
-					transHistoryDetail.setUIDTo(uidto);
-					transHistoryDetail.setSN(count++);
-					transHistoryDetails.add(transHistoryDetail);
-				}
-			}
-			TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-			transHistoryDetail.setExpressSheet(es);
-			transHistoryDetail.setSN(count++);
-			transHistoryDetails.add(transHistoryDetail);
+			if(es==null) return transHistoryDetails;
+			List<TransPackage> transPackages = transPackageDao.findbyExpressSheetIdList(expressID);
 			
-		}else if(es.getStatus() == ExpressSheet.STATUS.STATUS_PAISONG) {
-			for (int i = 0; i <= 1; i++) {
+			int count = 0;
+			if (es.getStatus() == ExpressSheet.STATUS.STATUS_CREATED) {
 				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
 				transHistoryDetail.setExpressSheet(es);
 				transHistoryDetail.setSN(count++);
 				transHistoryDetails.add(transHistoryDetail);
-			}
-			for (TransPackage transPackage : transPackages) {
-				List<TransHistory> transHistories = transHistoryDao.getPkgListOrderByAscTime(transPackage);
-				for (TransHistory transHistory : transHistories) {
+			} else if (es.getStatus() == ExpressSheet.STATUS.STATUS_DAIZHUAYUN) {
+				for (int i = 0; i <= 1; i++) {
 					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
 					transHistoryDetail.setExpressSheet(es);
-					UserInfo uidfrom = userInfoDao.get(transHistory.getUIDFrom());
-					UserInfo uidto = userInfoDao.get(transHistory.getUIDTo());
-					TransNode fromNode = transNodeDao.get(uidfrom.getDptID());
-					TransNode toNode = transNodeDao.get(uidto.getDptID());
-					transHistoryDetail.setFromNode(fromNode);
-					transHistoryDetail.setToNode(toNode);
-					transHistoryDetail.setTransHistory(transHistory);
-					transHistoryDetail.setUIDFrom(uidfrom);
-					transHistoryDetail.setUIDTo(uidto);
 					transHistoryDetail.setSN(count++);
 					transHistoryDetails.add(transHistoryDetail);
 				}
-				
-			}
-			for(int i = 0; i<= 1;i++) {
-				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-				transHistoryDetail.setExpressSheet(es);
-				UserInfo uidfrom = userInfoDao.get(Integer.valueOf(es.getDeliver()));
-				transHistoryDetail.setUIDFrom(uidfrom);
-				transHistoryDetail.setSN(count++);
-				transHistoryDetails.add(transHistoryDetail);
-			}
-		}else if(es.getStatus() == ExpressSheet.STATUS.STATUS_DELIVERIED) {
-			for (int i = 0; i <= 1; i++) {
-				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
-				transHistoryDetail.setExpressSheet(es);
-				transHistoryDetail.setSN(count++);
-				transHistoryDetails.add(transHistoryDetail);
-			}
-			for (TransPackage transPackage : transPackages) {
-				List<TransHistory> transHistories = transHistoryDao.getPkgListOrderByAscTime(transPackage);
-				for (TransHistory transHistory : transHistories) {
+			} else if (es.getStatus() == ExpressSheet.STATUS.STATUS_TRANSPORT) {
+				for (int i = 0; i <= 1; i++) {
 					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
 					transHistoryDetail.setExpressSheet(es);
-					UserInfo uidfrom = userInfoDao.get(transHistory.getUIDFrom());
-					UserInfo uidto = userInfoDao.get(transHistory.getUIDTo());
-					TransNode fromNode = transNodeDao.get(uidfrom.getDptID());
-					TransNode toNode = transNodeDao.get(uidto.getDptID());
-					transHistoryDetail.setFromNode(fromNode);
-					transHistoryDetail.setToNode(toNode);
-					transHistoryDetail.setTransHistory(transHistory);
-					transHistoryDetail.setUIDFrom(uidfrom);
-					transHistoryDetail.setUIDTo(uidto);
 					transHistoryDetail.setSN(count++);
 					transHistoryDetails.add(transHistoryDetail);
 				}
-				
-			}
-			for(int i = 0; i<= 2;i++) {
+				for (TransPackage transPackage : transPackages) {
+					List<TransHistory> transHistories = transHistoryDao.getPkgListOrderByAscTime(transPackage);
+					for (TransHistory transHistory : transHistories) {
+						TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+						transHistoryDetail.setExpressSheet(es);
+						UserInfo uidfrom = userInfoDao.get(transHistory.getUIDFrom());
+						UserInfo uidto = userInfoDao.get(transHistory.getUIDTo());
+						
+						TransNode fromNode = transNodeDao.get(transPackage.getSourceNode());
+						TransNode toNode = transNodeDao.get(transPackage.getTargetNode());
+						transHistoryDetail.setFromNode(fromNode);
+						transHistoryDetail.setToNode(toNode);
+						transHistoryDetail.setTransHistory(transHistory);
+						transHistoryDetail.setUIDFrom(uidfrom);
+						transHistoryDetail.setUIDTo(uidto);
+						transHistoryDetail.setSN(count++);
+						transHistoryDetails.add(transHistoryDetail);
+					}
+				}
+			}else if (es.getStatus() == ExpressSheet.STATUS.STATUS_DAIPAISONG) {
+				for (int i = 0; i <= 1; i++) {
+					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+					transHistoryDetail.setExpressSheet(es);
+					transHistoryDetail.setSN(count++);
+					transHistoryDetails.add(transHistoryDetail);
+				}
+				for (TransPackage transPackage : transPackages) {
+					List<TransHistory> transHistories = transHistoryDao.getPkgListOrderByAscTime(transPackage);
+					for (TransHistory transHistory : transHistories) {
+						TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+						transHistoryDetail.setExpressSheet(es);
+						UserInfo uidfrom = userInfoDao.get(transHistory.getUIDFrom());
+						UserInfo uidto = userInfoDao.get(transHistory.getUIDTo());
+						TransNode fromNode = transNodeDao.get(transPackage.getSourceNode());
+						TransNode toNode = transNodeDao.get(transPackage.getTargetNode());
+						transHistoryDetail.setFromNode(fromNode);
+						transHistoryDetail.setToNode(toNode);
+						transHistoryDetail.setTransHistory(transHistory);
+						transHistoryDetail.setUIDFrom(uidfrom);
+						transHistoryDetail.setUIDTo(uidto);
+						transHistoryDetail.setSN(count++);
+						transHistoryDetails.add(transHistoryDetail);
+					}
+				}
 				TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
 				transHistoryDetail.setExpressSheet(es);
-				UserInfo uidfrom = userInfoDao.get(Integer.valueOf(es.getDeliver()));
-				transHistoryDetail.setUIDFrom(uidfrom);
 				transHistoryDetail.setSN(count++);
 				transHistoryDetails.add(transHistoryDetail);
+				
+			}else if(es.getStatus() == ExpressSheet.STATUS.STATUS_PAISONG) {
+				for (int i = 0; i <= 1; i++) {
+					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+					transHistoryDetail.setExpressSheet(es);
+					transHistoryDetail.setSN(count++);
+					transHistoryDetails.add(transHistoryDetail);
+				}
+				for (TransPackage transPackage : transPackages) {
+					List<TransHistory> transHistories = transHistoryDao.getPkgListOrderByAscTime(transPackage);
+					for (TransHistory transHistory : transHistories) {
+						TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+						transHistoryDetail.setExpressSheet(es);
+						UserInfo uidfrom = userInfoDao.get(transHistory.getUIDFrom());
+						UserInfo uidto = userInfoDao.get(transHistory.getUIDTo());
+						TransNode fromNode = transNodeDao.get(transPackage.getSourceNode());
+						TransNode toNode = transNodeDao.get(transPackage.getTargetNode());
+						transHistoryDetail.setFromNode(fromNode);
+						transHistoryDetail.setToNode(toNode);
+						transHistoryDetail.setTransHistory(transHistory);
+						transHistoryDetail.setUIDFrom(uidfrom);
+						transHistoryDetail.setUIDTo(uidto);
+						transHistoryDetail.setSN(count++);
+						transHistoryDetails.add(transHistoryDetail);
+					}
+					
+				}
+				for(int i = 0; i<= 1;i++) {
+					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+					transHistoryDetail.setExpressSheet(es);
+					UserInfo uidfrom = userInfoDao.get(Integer.valueOf(es.getDeliver()));
+					transHistoryDetail.setUIDFrom(uidfrom);
+					transHistoryDetail.setSN(count++);
+					transHistoryDetails.add(transHistoryDetail);
+				}
+			}else if(es.getStatus() == ExpressSheet.STATUS.STATUS_DELIVERIED) {
+				for (int i = 0; i <= 1; i++) {
+					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+					transHistoryDetail.setExpressSheet(es);
+					transHistoryDetail.setSN(count++);
+					transHistoryDetails.add(transHistoryDetail);
+				}
+				for (TransPackage transPackage : transPackages) {
+					List<TransHistory> transHistories = transHistoryDao.getPkgListOrderByAscTime(transPackage);
+					for (TransHistory transHistory : transHistories) {
+						TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+						transHistoryDetail.setExpressSheet(es);
+						UserInfo uidfrom = userInfoDao.get(transHistory.getUIDFrom());
+						UserInfo uidto = userInfoDao.get(transHistory.getUIDTo());
+						
+						TransNode fromNode = transNodeDao.get(transPackage.getSourceNode());
+						TransNode toNode = transNodeDao.get(transPackage.getTargetNode());
+						transHistoryDetail.setFromNode(fromNode);
+						transHistoryDetail.setToNode(toNode);
+						transHistoryDetail.setTransHistory(transHistory);
+						transHistoryDetail.setUIDFrom(uidfrom);
+						transHistoryDetail.setUIDTo(uidto);
+						transHistoryDetail.setSN(count++);
+						transHistoryDetails.add(transHistoryDetail);
+					}
+					
+				}
+				for(int i = 0; i<= 2;i++) {
+					TransHistoryDetail transHistoryDetail = new TransHistoryDetail();
+					transHistoryDetail.setExpressSheet(es);
+					UserInfo uidfrom = userInfoDao.get(Integer.valueOf(es.getDeliver()));
+					transHistoryDetail.setUIDFrom(uidfrom);
+					transHistoryDetail.setSN(count++);
+					transHistoryDetails.add(transHistoryDetail);
+				}
 			}
-		}
-		return transHistoryDetails;
+			return transHistoryDetails;
 
-	}
+		}
 
 	//tzx
 		@Override
