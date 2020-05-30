@@ -723,7 +723,7 @@ public class DomainService implements IDomainService {
 				// TODO: handle exception
 			}
 			if(es==null) return transHistoryDetails;
-			List<TransPackage> transPackages = transPackageDao.findbyExpressSheetIdList(expressID);
+			List<TransPackage> transPackages = transPackageDao.findbyExpressSheetIdListorderbytime(expressID);
 			
 			int count = 0;
 			if (es.getStatus() == ExpressSheet.STATUS.STATUS_CREATED) {
@@ -913,7 +913,7 @@ public class DomainService implements IDomainService {
 	@Override
 	public List<PackageRoute> getPackageRouteListByExpressId(String expressID){
 		List<PackageRoute> packageRoutes= new ArrayList<PackageRoute>();
-		List<TransPackage> transPackages = transPackageDao.findbyExpressSheetIdList(expressID);
+		List<TransPackage> transPackages = transPackageDao.findbyExpressSheetIdListorderbytime(expressID);
 		for(TransPackage transPackage:transPackages) {
 			List<PackageRoute> pRoutes = packageRouteDao.getPackageRouteListByPkg(transPackage);
 			packageRoutes.addAll(pRoutes);
